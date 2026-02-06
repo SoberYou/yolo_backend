@@ -1,0 +1,504 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "YOLO Life Timer API",
+    "description": "API documentation for YOLO Life Timer Backend MVP",
+    "version": "v1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/life/configLife": {
+      "post": {
+        "tags": ["Life"],
+        "summary": "Configure Life Parameters",
+        "operationId": "configLife",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LifeConfigRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/life/getLifeConfig": {
+      "get": {
+        "tags": ["Life"],
+        "summary": "Get Life Configuration",
+        "operationId": "getLifeConfig",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLifeConfigDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/life/getLifeStatus": {
+      "get": {
+        "tags": ["Life"],
+        "summary": "Get Life Status",
+        "operationId": "getLifeStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLifeStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/goals": {
+      "get": {
+        "tags": ["Goal"],
+        "summary": "Get All Goals",
+        "operationId": "getGoals",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListGoal"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Goal"],
+        "summary": "Create New Goal",
+        "operationId": "createGoal",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseGoal"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/goals/{goalId}": {
+      "get": {
+        "tags": ["Goal"],
+        "summary": "Get Goal By ID",
+        "operationId": "getGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseGoal"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus/start": {
+      "post": {
+        "tags": ["Focus"],
+        "summary": "Start Focus Session",
+        "operationId": "startFocus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusStartRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFocusSession"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus/end": {
+      "post": {
+        "tags": ["Focus"],
+        "summary": "End Focus Session",
+        "operationId": "endFocus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFocusSession"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus/statistics": {
+      "get": {
+        "tags": ["Focus"],
+        "summary": "Get Focus Statistics",
+        "operationId": "getStatistics",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFocusStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiResponseVoid": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "object",
+            "nullable": true
+          }
+        }
+      },
+      "ApiResponseLifeStatusDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LifeStatusDto"
+          }
+        }
+      },
+      "ApiResponseLifeConfigDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LifeConfigDto"
+          }
+        }
+      },
+      "ApiResponseGoal": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Goal"
+          }
+        }
+      },
+      "ApiResponseListGoal": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Goal"
+            }
+          }
+        }
+      },
+      "ApiResponseFocusSession": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FocusSession"
+          }
+        }
+      },
+      "ApiResponseFocusStatsDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FocusStatsDto"
+          }
+        }
+      },
+      "LifeConfigRequest": {
+        "type": "object",
+        "properties": {
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1995-05-20"
+          },
+          "expectedLifeYears": {
+            "type": "integer",
+            "example": 80
+          }
+        }
+      },
+      "LifeStatusDto": {
+        "type": "object",
+        "properties": {
+          "totalDays": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usedDays": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usedRatio": {
+            "type": "string"
+          },
+          "lifeClock": {
+            "type": "string"
+          }
+        }
+      },
+      "LifeConfigDto": {
+        "type": "object",
+        "properties": {
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1995-05-20"
+          },
+          "expectedLifeYears": {
+            "type": "integer",
+            "example": 80
+          }
+        }
+      },
+      "GoalCreateRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "Learn Java"
+          },
+          "description": {
+            "type": "string",
+            "example": "Master Spring Boot"
+          }
+        }
+      },
+      "Goal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FocusStartRequest": {
+        "type": "object",
+        "properties": {
+          "goalId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        }
+      },
+      "FocusSession": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "goalId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FocusStatsDto": {
+        "type": "object",
+        "properties": {
+          "goalId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalSessions": {
+            "type": "integer"
+          },
+          "totalMinutes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      }
+    }
+  }
+}
