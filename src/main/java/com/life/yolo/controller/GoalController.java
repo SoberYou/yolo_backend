@@ -1,6 +1,7 @@
 package com.life.yolo.controller;
 
 import com.life.yolo.common.ApiResponse;
+import com.life.yolo.dto.GoalWithStatsDto;
 import com.life.yolo.entity.Goal;
 import com.life.yolo.service.GoalService;
 import lombok.Data;
@@ -18,12 +19,12 @@ public class GoalController {
 
     @PostMapping
     public ApiResponse<Goal> createGoal(@RequestBody GoalCreateRequest request) {
-        Goal goal = goalService.createGoal(request.getTitle(), request.getDescription());
+        Goal goal = goalService.createGoal(request.getTitle(), request.getDescription(),request.getExpectedTotalHours());
         return ApiResponse.success(goal);
     }
 
     @GetMapping
-    public ApiResponse<List<Goal>> getGoals() {
+    public ApiResponse<List<GoalWithStatsDto>> getGoals() {
         return ApiResponse.success(goalService.getGoals());
     }
 
@@ -36,5 +37,6 @@ public class GoalController {
     public static class GoalCreateRequest {
         private String title;
         private String description;
+        private Integer expectedTotalHours;
     }
 }

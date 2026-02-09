@@ -14,8 +14,12 @@ public class Goal {
     private Long id;
 
     private String title;
+    
+    private Long userId;
 
     private String description;
+
+    private Integer expectedTotalHours;
 
     private String status;
 

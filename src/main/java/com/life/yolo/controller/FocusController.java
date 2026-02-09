@@ -1,6 +1,7 @@
 package com.life.yolo.controller;
 
 import com.life.yolo.common.ApiResponse;
+import com.life.yolo.dto.FocusStatsDto;
 import com.life.yolo.entity.FocusSession;
 import com.life.yolo.service.FocusService;
 import lombok.Data;
@@ -25,7 +26,7 @@ public class FocusController {
     }
 
     @GetMapping("/statistics")
-    public ApiResponse<FocusService.FocusStatsDto> getStatistics(@RequestParam(required = false) Long goalId) {
+    public ApiResponse<FocusStatsDto> getStatistics(@RequestParam Long goalId) {
         return ApiResponse.success(focusService.getStatistics(goalId));
     }
 

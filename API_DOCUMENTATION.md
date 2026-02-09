@@ -73,7 +73,8 @@
   ```json
   {
     "title": "学习 Java",
-    "description": "掌握 Spring Boot 开发"
+    "description": "掌握 Spring Boot 开发",
+    "expectedTotalHours": 100
   }
   ```
 - **Response**: `ApiResponse<Goal>`
@@ -81,7 +82,7 @@
 ### 2.2 获取目标列表
 - **URL**: `/goals`
 - **Method**: `GET`
-- **Response**: `ApiResponse<List<Goal>>`
+- **Response**: `ApiResponse<List<GoalWithStatsDto>>`
   ```json
   {
     "code": 200,
@@ -91,9 +92,11 @@
         "id": 1,
         "title": "学习 Java",
         "description": "掌握 Spring Boot 开发",
+        "expectedTotalHours": 100,
         "status": "ACTIVE",
         "createdAt": "2024-03-20T10:00:00",
-        "updatedAt": "2024-03-20T10:00:00"
+        "updatedAt": "2024-03-20T10:00:00",
+        "last7DaysMinutes": 120
       }
     ]
   }
@@ -142,12 +145,12 @@
   ```
 
 ### 3.3 获取专注统计
-按目标 ID 统计总专注时长。
+按目标 ID 统计专注时长详情。
 
 - **URL**: `/focus/statistics`
 - **Method**: `GET`
 - **Query Params**:
-  - `goalId` (可选): 指定目标ID，不传则统计所有
+  - `goalId` (必填): 指定目标ID
 - **Response**: `ApiResponse<FocusStatsDto>`
   ```json
   {
@@ -155,8 +158,15 @@
     "message": "Success",
     "data": {
       "goalId": 1,
-      "totalSessions": 5,
-      "totalMinutes": 225
+      "goalTitle": "学习 Java",
+      "last7DaysMinutes": 120,
+      "last30DaysMinutes": 500,
+      "dailyRecords": [
+        {
+          "date": "2024-03-20",
+          "minutes": 45
+        }
+      ]
     }
   }
   ```

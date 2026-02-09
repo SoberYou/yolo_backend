@@ -90,7 +90,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListGoal"
+                  "$ref": "#/components/schemas/ApiResponseListGoalWithStatsDto"
                 }
               }
             }
@@ -212,7 +212,7 @@
           {
             "name": "goalId",
             "in": "query",
-            "required": false,
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
@@ -320,6 +320,25 @@
           }
         }
       },
+      "ApiResponseListGoalWithStatsDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GoalWithStatsDto"
+            }
+          }
+        }
+      },
       "ApiResponseFocusSession": {
         "type": "object",
         "properties": {
@@ -409,6 +428,10 @@
           "description": {
             "type": "string",
             "example": "Master Spring Boot"
+          },
+          "expectedTotalHours": {
+            "type": "integer",
+            "example": 100
           }
         }
       },
@@ -425,6 +448,9 @@
           "description": {
             "type": "string"
           },
+          "expectedTotalHours": {
+            "type": "integer"
+          },
           "status": {
             "type": "string"
           },
@@ -437,6 +463,22 @@
             "format": "date-time"
           }
         }
+      },
+      "GoalWithStatsDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Goal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "last7DaysMinutes": {
+                "type": "integer",
+                "format": "int64"
+              }
+            }
+          }
+        ]
       },
       "FocusStartRequest": {
         "type": "object",
@@ -490,12 +532,34 @@
             "type": "integer",
             "format": "int64"
           },
-          "totalSessions": {
-            "type": "integer"
+          "goalTitle": {
+            "type": "string"
           },
-          "totalMinutes": {
+          "last7DaysMinutes": {
             "type": "integer",
             "format": "int64"
+          },
+          "last30DaysMinutes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dailyRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyFocusRecord"
+            }
+          }
+        }
+      },
+      "DailyFocusRecord": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "minutes": {
+            "type": "integer"
           }
         }
       }
