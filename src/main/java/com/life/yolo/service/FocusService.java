@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.life.yolo.dto.FocusSessionDto;
+import org.springframework.beans.BeanUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -33,6 +36,7 @@ public class FocusService {
     public FocusSession startFocus(Long goalId) {
         // Check if there is any running session
         QueryWrapper<FocusSession> query = new QueryWrapper<>();
+        query.eq("goal_id", goalId);
         query.eq("status", "RUNNING");
         Long count = focusSessionMapper.selectCount(query);
         
@@ -53,22 +57,43 @@ public class FocusService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FocusSession endFocus() {
-        QueryWrapper<FocusSession> query = new QueryWrapper<>();
-        query.eq("status", "RUNNING");
-        FocusSession session = focusSessionMapper.selectOne(query);
-        
-        if (session == null) {
-            throw new RuntimeException("No running focus session found");
+    public FocusSession endFocus(Long id, LocalDateTime startTime, LocalDateTime endTime, Integer durationMinutes) {
+        FocusSession session;
+        if (id != null) {
+            session = focusSessionMapper.selectById(id);
+            if (session == null) {
+                throw new RuntimeException("Focus session not found with id: " + id);
+            }
+        } else {
+            QueryWrapper<FocusSession> query = new QueryWrapper<>();
+            query.eq("status", "RUNNING");
+            session = focusSessionMapper.selectOne(query);
+            if (session == null) {
+                throw new RuntimeException("No running focus session found");
+            }
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        session.setEndTime(now);
+        if (startTime != null) {
+            session.setStartTime(startTime);
+        }
+
+        LocalDateTime finalEndTime;
+        if (durationMinutes != null) {
+            finalEndTime = session.getStartTime().plusMinutes(durationMinutes);
+            session.setDurationMinutes(durationMinutes);
+        } else {
+            if (endTime != null) {
+                finalEndTime = endTime;
+            } else {
+                finalEndTime = LocalDateTime.now();
+            }
+            long calculatedMinutes = ChronoUnit.MINUTES.between(session.getStartTime(), finalEndTime);
+            session.setDurationMinutes((int) calculatedMinutes);
+        }
+
+        session.setEndTime(finalEndTime);
         session.setStatus("COMPLETED");
-        
-        long minutes = ChronoUnit.MINUTES.between(session.getStartTime(), now);
-        session.setDurationMinutes((int) minutes);
-        session.setUpdatedAt(now);
+        session.setUpdatedAt(LocalDateTime.now());
         
         focusSessionMapper.updateById(session);
         return session;
@@ -126,5 +151,69 @@ public class FocusService {
         dto.setDailyRecords(dailyRecords);
         
         return dto;
+    }
+
+    public FocusSession getRunningSession(Long goalId) {
+        QueryWrapper<FocusSession> query = new QueryWrapper<>();
+        query.eq("status", "RUNNING");
+        if (goalId != null) {
+            query.eq("goal_id", goalId);
+        }
+        return focusSessionMapper.selectOne(query);
+    }
+
+    public FocusSessionDto getFocusSessionById(Long id) {
+        FocusSession session = focusSessionMapper.selectById(id);
+        if (session == null) {
+            throw new RuntimeException("Focus session not found with id: " + id);
+        }
+
+        FocusSessionDto dto = new FocusSessionDto();
+        BeanUtils.copyProperties(session, dto);
+
+        if (session.getGoalId() != null) {
+            Goal goal = goalService.getGoalById(session.getGoalId());
+            if (goal != null) {
+                dto.setGoalTitle(goal.getTitle());
+            }
+        }
+
+        return dto;
+    }
+
+    public List<FocusSessionDto> getFocusSessionList(Long goalId) {
+        QueryWrapper<FocusSession> query = new QueryWrapper<>();
+        if (goalId != null) {
+            query.eq("goal_id", goalId);
+        }
+        query.orderByDesc("start_time");
+
+        List<FocusSession> sessions = focusSessionMapper.selectList(query);
+        
+        // Get all unique goal IDs
+        List<Long> goalIds = sessions.stream()
+                .map(FocusSession::getGoalId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<Long, String> goalTitleMap = new java.util.HashMap<>();
+        if (!goalIds.isEmpty()) {
+            // Since we don't have batch get in GoalService (only getGoalById), we can fetch individually or add a method.
+            // For now, let's fetch individually as it's MVP and simpler, or assume we can rely on GoalService.
+            // Actually, we can just loop.
+            for (Long gid : goalIds) {
+                Goal g = goalService.getGoalById(gid);
+                if (g != null) {
+                    goalTitleMap.put(gid, g.getTitle());
+                }
+            }
+        }
+
+        return sessions.stream().map(session -> {
+            FocusSessionDto dto = new FocusSessionDto();
+            BeanUtils.copyProperties(session, dto);
+            dto.setGoalTitle(goalTitleMap.get(session.getGoalId()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

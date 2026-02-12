@@ -126,10 +126,19 @@
 - **Response**: `ApiResponse<FocusSession>`
 
 ### 3.2 结束专注
-结束当前正在进行的专注会话，并计算时长。
+结束当前正在进行的专注会话，或根据 ID 更新/结束指定会话。支持手动指定时间或持续时长。
 
 - **URL**: `/focus/end`
 - **Method**: `POST`
+- **Request Body**: `application/json` (可选)
+  ```json
+  {
+    "id": 101, // 可选，若不传则查找当前 RUNNING 状态的会话
+    "startTime": "2024-03-20T14:00:00", // 可选，修改开始时间
+    "endTime": "2024-03-20T14:45:00", // 可选，指定结束时间
+    "durationMinutes": 45 // 可选，指定持续时长（若存在，结束时间 = 开始时间 + 时长）
+  }
+  ```
 - **Response**: `ApiResponse<FocusSession>`
   ```json
   {
@@ -147,7 +156,79 @@
   }
   ```
 
-### 3.3 获取专注统计
+### 3.3 获取进行中的专注会话
+获取指定目标（或任意目标）当前正在进行的专注会话。
+
+- **URL**: `/focus/running`
+- **Method**: `GET`
+- **Query Params**:
+  - `goalId` (可选): 筛选指定目标的进行中会话
+- **Response**: `ApiResponse<FocusSession>`
+  ```json
+  {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "id": 102,
+      "goalId": 1,
+      "startTime": "2024-03-20T15:00:00",
+      "status": "RUNNING",
+      ...
+    }
+  }
+  ```
+
+### 3.4 获取专注列表
+获取专注记录列表，支持按目标筛选。
+
+- **URL**: `/focus`
+- **Method**: `GET`
+- **Query Params**:
+  - `goalId` (可选): 筛选指定目标的专注记录
+- **Response**: `ApiResponse<List<FocusSessionDto>>`
+  ```json
+  {
+    "code": 200,
+    "message": "Success",
+    "data": [
+      {
+        "id": 101,
+        "goalId": 1,
+        "goalTitle": "学习 Java",
+        "startTime": "2024-03-20T14:00:00",
+        "endTime": "2024-03-20T14:45:00",
+        "status": "COMPLETED",
+        "durationMinutes": 45,
+        ...
+      }
+    ]
+  }
+  ```
+
+### 3.5 获取单个专注记录
+获取指定 ID 的专注记录详情。
+
+- **URL**: `/focus/{id}`
+- **Method**: `GET`
+- **Response**: `ApiResponse<FocusSessionDto>`
+  ```json
+  {
+    "code": 200,
+    "message": "Success",
+    "data": {
+      "id": 101,
+      "goalId": 1,
+      "goalTitle": "学习 Java",
+      "startTime": "2024-03-20T14:00:00",
+      "endTime": "2024-03-20T14:45:00",
+      "status": "COMPLETED",
+      "durationMinutes": 45,
+      ...
+    }
+  }
+  ```
+
+### 3.6 获取专注统计
 按目标 ID 统计专注时长详情。
 
 - **URL**: `/focus/statistics`

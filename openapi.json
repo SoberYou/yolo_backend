@@ -189,6 +189,16 @@
         "tags": ["Focus"],
         "summary": "End Focus Session",
         "operationId": "endFocus",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FocusEndRequest"
+              }
+            }
+          },
+          "required": false
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -196,6 +206,96 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseFocusSession"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus/running": {
+      "get": {
+        "tags": ["Focus"],
+        "summary": "Get Running Focus Session",
+        "operationId": "getRunningSession",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFocusSession"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus": {
+      "get": {
+        "tags": ["Focus"],
+        "summary": "Get Focus Session List",
+        "operationId": "getFocusList",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListFocusSessionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/focus/{id}": {
+      "get": {
+        "tags": ["Focus"],
+        "summary": "Get Focus Session By ID",
+        "operationId": "getFocusById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseFocusSessionDto"
                 }
               }
             }
@@ -502,6 +602,26 @@
           }
         }
       },
+      "FocusEndRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": "integer"
+          }
+        }
+      },
       "FocusSession": {
         "type": "object",
         "properties": {
@@ -534,6 +654,56 @@
           "updatedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "FocusSessionDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FocusSession"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "goalTitle": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "ApiResponseListFocusSessionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FocusSessionDto"
+            }
+          }
+        }
+      },
+      "ApiResponseFocusSessionDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/FocusSessionDto"
           }
         }
       },
