@@ -16,11 +16,15 @@ CREATE TABLE IF NOT EXISTS life_profile (
 -- 2. Goal Table
 CREATE TABLE IF NOT EXISTS goal (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Primary Key',
+    user_id BIGINT NOT NULL DEFAULT 1 COMMENT 'Fixed User ID for MVP',
     title VARCHAR(100) NOT NULL COMMENT 'Goal Title',
     description TEXT COMMENT 'Goal Description',
+    expected_total_hours INT COMMENT 'Expected Total Hours',
+    north_star VARCHAR(255) COMMENT 'North Star Metric',
     status VARCHAR(20) DEFAULT 'ACTIVE' COMMENT 'Status: ACTIVE, COMPLETED, ARCHIVED',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time'
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
+    UNIQUE KEY uk_title (title)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Goal Management';
 
 -- 3. Focus Session Table

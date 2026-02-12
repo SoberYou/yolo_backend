@@ -21,6 +21,8 @@ public class Goal {
 
     private Integer expectedTotalHours;
 
+    private String northStar;
+    
     private String status;
 
     private LocalDateTime createdAt;

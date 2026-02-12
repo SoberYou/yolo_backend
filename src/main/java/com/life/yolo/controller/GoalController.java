@@ -18,8 +18,8 @@ public class GoalController {
     private GoalService goalService;
 
     @PostMapping
-    public ApiResponse<Goal> createGoal(@RequestBody GoalCreateRequest request) {
-        Goal goal = goalService.createGoal(request.getTitle(), request.getDescription(),request.getExpectedTotalHours());
+    public ApiResponse<Goal> saveGoal(@RequestBody GoalSaveRequest request) {
+        Goal goal = goalService.saveGoal(request.getId(), request.getTitle(), request.getDescription(),request.getExpectedTotalHours(), request.getNorthStar());
         return ApiResponse.success(goal);
     }
 
@@ -34,9 +34,11 @@ public class GoalController {
     }
 
     @Data
-    public static class GoalCreateRequest {
+    public static class GoalSaveRequest {
+        private Long id;
         private String title;
         private String description;
         private Integer expectedTotalHours;
+        private String northStar;
     }
 }

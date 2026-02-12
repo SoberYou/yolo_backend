@@ -66,15 +66,17 @@
 
 ## 2. 目标管理 (Goal)
 
-### 2.1 创建目标
+### 2.1 创建或更新目标 (Save Goal)
 - **URL**: `/goals`
 - **Method**: `POST`
 - **Body**:
   ```json
   {
+    "id": 1, // 可选，若存在则更新，若为空则创建
     "title": "学习 Java",
     "description": "掌握 Spring Boot 开发",
-    "expectedTotalHours": 100
+    "expectedTotalHours": 100,
+    "northStar": "成为高级 Java 工程师"
   }
   ```
 - **Response**: `ApiResponse<Goal>`
@@ -93,6 +95,7 @@
         "title": "学习 Java",
         "description": "掌握 Spring Boot 开发",
         "expectedTotalHours": 100,
+        "northStar": "成为高级 Java 工程师",
         "status": "ACTIVE",
         "createdAt": "2024-03-20T10:00:00",
         "updatedAt": "2024-03-20T10:00:00",

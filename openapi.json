@@ -99,13 +99,13 @@
       },
       "post": {
         "tags": ["Goal"],
-        "summary": "Create New Goal",
-        "operationId": "createGoal",
+        "summary": "Create or Update Goal",
+        "operationId": "saveGoal",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GoalCreateRequest"
+                "$ref": "#/components/schemas/GoalSaveRequest"
               }
             }
           },
@@ -418,9 +418,14 @@
           }
         }
       },
-      "GoalCreateRequest": {
+      "GoalSaveRequest": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
           "title": {
             "type": "string",
             "example": "Learn Java"
@@ -432,6 +437,10 @@
           "expectedTotalHours": {
             "type": "integer",
             "example": 100
+          },
+          "northStar": {
+            "type": "string",
+            "example": "Become a Senior Java Developer"
           }
         }
       },
@@ -450,6 +459,9 @@
           },
           "expectedTotalHours": {
             "type": "integer"
+          },
+          "northStar": {
+            "type": "string"
           },
           "status": {
             "type": "string"

@@ -29,17 +29,41 @@ public class GoalService {
 
     private static final Long DEFAULT_USER_ID = 1L;
 
-    public Goal createGoal(String title, String description, Integer expectedTotalHours) {
-        Goal goal = new Goal();
-        goal.setUserId(DEFAULT_USER_ID);
+    public Goal saveGoal(Long id, String title, String description, Integer expectedTotalHours, String northStar) {
+        // Check title uniqueness
+        QueryWrapper<Goal> query = new QueryWrapper<>();
+        query.eq("title", title);
+        if (id != null) {
+            query.ne("id", id);
+        }
+        if (goalMapper.selectCount(query) > 0) {
+            throw new IllegalArgumentException("Goal title already exists");
+        }
+
+        Goal goal;
+        if (id != null) {
+            goal = goalMapper.selectById(id);
+            if (goal == null) {
+                throw new IllegalArgumentException("Goal not found with id: " + id);
+            }
+        } else {
+            goal = new Goal();
+            goal.setUserId(DEFAULT_USER_ID);
+            goal.setStatus("ACTIVE");
+            goal.setCreatedAt(LocalDateTime.now());
+        }
+
         goal.setTitle(title);
         goal.setDescription(description);
         goal.setExpectedTotalHours(expectedTotalHours);
-        goal.setStatus("ACTIVE");
-        goal.setCreatedAt(LocalDateTime.now());
+        goal.setNorthStar(northStar);
         goal.setUpdatedAt(LocalDateTime.now());
         
-        goalMapper.insert(goal);
+        if (id != null) {
+            goalMapper.updateById(goal);
+        } else {
+            goalMapper.insert(goal);
+        }
         return goal;
     }
 
