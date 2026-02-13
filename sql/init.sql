@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS life_profile (
     user_id BIGINT NOT NULL DEFAULT 1 COMMENT 'Fixed User ID for MVP',
     birth_date DATE NOT NULL COMMENT 'Date of Birth',
     expected_life_years INT NOT NULL COMMENT 'Expected Life Span in Years',
+    energy_life_years INT COMMENT 'Energy Life Span in Years',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
     UNIQUE KEY uk_user_id (user_id)

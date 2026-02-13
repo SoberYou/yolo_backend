@@ -23,7 +23,7 @@ public class LifeService {
     private static final Long DEFAULT_USER_ID = 1L;
 
     @Transactional(rollbackFor = Exception.class)
-    public void configureLife(LocalDate birthDate, Integer expectedLifeYears) {
+    public void configureLife(LocalDate birthDate, Integer expectedLifeYears, Integer energyLifeYears) {
         QueryWrapper<LifeProfile> query = new QueryWrapper<>();
         query.eq("user_id", DEFAULT_USER_ID);
         LifeProfile profile = lifeProfileMapper.selectOne(query);
@@ -36,6 +36,7 @@ public class LifeService {
         
         profile.setBirthDate(birthDate);
         profile.setExpectedLifeYears(expectedLifeYears);
+        profile.setEnergyLifeYears(energyLifeYears);
         profile.setUpdatedAt(LocalDateTime.now());
 
         if (profile.getId() == null) {
@@ -56,6 +57,7 @@ public class LifeService {
 
         LocalDate today = LocalDate.now();
         long usedDays = ChronoUnit.DAYS.between(profile.getBirthDate(), today);
+        long energyDays = (long) profile.getEnergyLifeYears() * 365; 
         long totalDays = (long) profile.getExpectedLifeYears() * 365;
         
         // Avoid division by zero
@@ -78,6 +80,7 @@ public class LifeService {
         LifeStatusDto dto = new LifeStatusDto();
         dto.setTotalDays(totalDays);
         dto.setUsedDays(usedDays);
+        dto.setEnergyDays(energyDays);
         dto.setUsedRatio(String.format("%.2f%%", ratio * 100));
         dto.setLifeClock(timeStr);
         
@@ -95,6 +98,7 @@ public class LifeService {
 
         LifeConfigDto dto = new LifeConfigDto();
         dto.setBirthDate(profile.getBirthDate());
+        dto.setEnergyLifeYears(profile.getEnergyLifeYears());
         dto.setExpectedLifeYears(profile.getExpectedLifeYears());
         return dto;
     }
@@ -102,6 +106,7 @@ public class LifeService {
     @Data
     public static class LifeStatusDto {
         private Long totalDays;
+        private Long energyDays;
         private Long usedDays;
         private String usedRatio;
         private String lifeClock;
@@ -111,5 +116,6 @@ public class LifeService {
     public static class LifeConfigDto {
         private LocalDate birthDate;
         private Integer expectedLifeYears;
+        private Integer energyLifeYears;
     }
 }

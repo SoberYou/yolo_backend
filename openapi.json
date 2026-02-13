@@ -482,6 +482,10 @@
           "expectedLifeYears": {
             "type": "integer",
             "example": 80
+          },
+          "energyLifeYears": {
+            "type": "integer",
+            "example": 60
           }
         }
       },
@@ -493,6 +497,10 @@
             "format": "int64"
           },
           "usedDays": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "energyDays": {
             "type": "integer",
             "format": "int64"
           },
@@ -515,6 +523,10 @@
           "expectedLifeYears": {
             "type": "integer",
             "example": 80
+          },
+          "energyLifeYears": {
+            "type": "integer",
+            "example": 60
           }
         }
       },

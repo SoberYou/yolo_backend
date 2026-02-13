@@ -19,6 +19,8 @@ public class LifeProfile {
     private LocalDate birthDate;
 
     private Integer expectedLifeYears;
+    
+    private Integer energyLifeYears;;
 
     private LocalDateTime createdAt;
 

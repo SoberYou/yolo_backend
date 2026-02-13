@@ -17,7 +17,7 @@ public class LifeController {
 
     @PostMapping("/configLife")
     public ApiResponse<Void> configLife(@RequestBody LifeConfigRequest request) {
-        lifeService.configureLife(request.getBirthDate(), request.getExpectedLifeYears());
+        lifeService.configureLife(request.getBirthDate(), request.getExpectedLifeYears(), request.getEnergyLifeYears());
         return ApiResponse.success(null);
     }
 
@@ -35,5 +35,6 @@ public class LifeController {
     public static class LifeConfigRequest {
         private LocalDate birthDate;
         private Integer expectedLifeYears;
+        private Integer energyLifeYears;
     }
 }

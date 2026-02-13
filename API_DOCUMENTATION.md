@@ -15,7 +15,7 @@
 ## 1. 人生时间 (Life)
 
 ### 1.1 配置人生参数
-初始化或更新用户的出生日期和预期寿命。
+初始化或更新用户的出生日期、预期寿命和精力寿命。
 
 - **URL**: `/life/configLife`
 - **Method**: `POST`
@@ -23,13 +23,14 @@
   ```json
   {
     "birthDate": "1995-05-20", // 出生日期 (YYYY-MM-DD)
-    "expectedLifeYears": 80    // 预期寿命 (年)
+    "expectedLifeYears": 80,   // 预期寿命 (年)
+    "energyLifeYears": 60      // 精力寿命 (年)
   }
   ```
 - **Response**: `ApiResponse<Void>`
 
 ### 1.2 获取人生配置
-获取用户配置的出生日期和预期寿命。
+获取用户配置的出生日期、预期寿命和精力寿命。
 
 - **URL**: `/life/getLifeConfig`
 - **Method**: `GET`
@@ -40,13 +41,14 @@
     "message": "Success",
     "data": {
       "birthDate": "1995-05-20",
-      "expectedLifeYears": 80
+      "expectedLifeYears": 80,
+      "energyLifeYears": 60
     }
   }
   ```
 
 ### 1.3 获取人生状态
-获取当前已使用的时间比例和“人生时钟”时间。
+获取当前已使用的时间比例、精力时间状态和“人生时钟”时间。
 
 - **URL**: `/life/getLifeStatus`
 - **Method**: `GET`
@@ -58,6 +60,7 @@
     "data": {
       "totalDays": 29200,      // 总寿命天数
       "usedDays": 10500,       // 已使用天数
+      "energyDays": 21900,     // 精力寿命天数
       "usedRatio": "35.96%",   // 已使用比例
       "lifeClock": "08:37"     // 映射到24小时制的时间点
     }
