@@ -56,6 +56,7 @@ public class MilestoneController {
         private Integer id;
         private Long goalId;
         private LocalDate milestoneDate;
+        private String milestoneTitle;
         private String milestoneDesc;
         private String ownFeel;
     }
