@@ -631,6 +631,9 @@
           },
           "durationMinutes": {
             "type": "integer"
+          },
+          "memo": {
+            "type": "string"
           }
         }
       },
@@ -658,6 +661,9 @@
           },
           "durationMinutes": {
             "type": "integer"
+          },
+          "memo": {
+            "type": "string"
           },
           "createdAt": {
             "type": "string",

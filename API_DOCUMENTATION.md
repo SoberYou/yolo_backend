@@ -139,7 +139,8 @@
     "id": 101, // 可选，若不传则查找当前 RUNNING 状态的会话
     "startTime": "2024-03-20T14:00:00", // 可选，修改开始时间
     "endTime": "2024-03-20T14:45:00", // 可选，指定结束时间
-    "durationMinutes": 45 // 可选，指定持续时长（若存在，结束时间 = 开始时间 + 时长）
+    "durationMinutes": 45, // 可选，指定持续时长（若存在，结束时间 = 开始时间 + 时长）
+    "memo": "Completed the chapter on Spring Security" // 可选，备注
   }
   ```
 - **Response**: `ApiResponse<FocusSession>`
@@ -154,6 +155,7 @@
       "endTime": "2024-03-20T14:45:00",
       "status": "COMPLETED",
       "durationMinutes": 45,
+      "memo": "Completed the chapter on Spring Security",
       ...
     }
   }
@@ -202,6 +204,7 @@
         "endTime": "2024-03-20T14:45:00",
         "status": "COMPLETED",
         "durationMinutes": 45,
+        "memo": "Completed the chapter on Spring Security",
         ...
       }
     ]
@@ -226,6 +229,7 @@
       "endTime": "2024-03-20T14:45:00",
       "status": "COMPLETED",
       "durationMinutes": 45,
+      "memo": "Completed the chapter on Spring Security",
       ...
     }
   }
@@ -246,6 +250,7 @@
     "data": {
       "goalId": 1,
       "goalTitle": "学习 Java",
+      "totalMinutes": 309,
       "last7DaysMinutes": 120,
       "last30DaysMinutes": 500,
       "dailyRecords": [

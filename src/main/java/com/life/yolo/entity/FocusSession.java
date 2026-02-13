@@ -26,6 +26,8 @@ public class FocusSession {
 
     private Integer durationMinutes;
 
+    private String memo;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

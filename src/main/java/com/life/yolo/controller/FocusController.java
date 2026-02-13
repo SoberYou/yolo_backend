@@ -28,7 +28,7 @@ public class FocusController {
         if (request == null) {
             request = new FocusEndRequest();
         }
-        return ApiResponse.success(focusService.endFocus(request.getId(), request.getStartTime(), request.getEndTime(), request.getDurationMinutes()));
+        return ApiResponse.success(focusService.endFocus(request.getId(), request.getStartTime(), request.getEndTime(), request.getDurationMinutes(), request.getMemo()));
     }
 
     @GetMapping("/running")
@@ -61,6 +61,7 @@ public class FocusController {
         private Long id;
         private java.time.LocalDateTime startTime;
         private java.time.LocalDateTime endTime;
+        private String memo;
         private Integer durationMinutes;
     }
 }

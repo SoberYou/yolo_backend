@@ -57,7 +57,7 @@ public class FocusService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public FocusSession endFocus(Long id, LocalDateTime startTime, LocalDateTime endTime, Integer durationMinutes) {
+    public FocusSession endFocus(Long id, LocalDateTime startTime, LocalDateTime endTime, Integer durationMinutes, String memo) {
         FocusSession session;
         if (id != null) {
             session = focusSessionMapper.selectById(id);
@@ -91,6 +91,10 @@ public class FocusService {
             session.setDurationMinutes((int) calculatedMinutes);
         }
 
+        if (memo != null) {
+            session.setMemo(memo);
+        }
+
         session.setEndTime(finalEndTime);
         session.setStatus("COMPLETED");
         session.setUpdatedAt(LocalDateTime.now());
@@ -120,6 +124,10 @@ public class FocusService {
         LocalDate sevenDaysAgo = today.minusDays(7);
         LocalDate thirtyDaysAgo = today.minusDays(30);
 
+        long totalMinutes = sessions.stream()
+                .mapToLong(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
+                .sum();
+        
         long last7DaysMinutes = sessions.stream()
                 .filter(s -> s.getStartDate() != null && s.getStartDate().isAfter(sevenDaysAgo))
                 .mapToLong(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
@@ -146,6 +154,7 @@ public class FocusService {
         FocusStatsDto dto = new FocusStatsDto();
         dto.setGoalId(goalId);
         dto.setGoalTitle(goal.getTitle());
+        dto.setTotalMinutes(totalMinutes);
         dto.setLast7DaysMinutes(last7DaysMinutes);
         dto.setLast30DaysMinutes(last30DaysMinutes);
         dto.setDailyRecords(dailyRecords);

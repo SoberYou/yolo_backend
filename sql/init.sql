@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS focus_session (
     end_time DATETIME DEFAULT NULL COMMENT 'End Time',
     status VARCHAR(20) NOT NULL COMMENT 'Status: RUNNING, COMPLETED',
     duration_minutes INT DEFAULT 0 COMMENT 'Duration in Minutes',
+    memo TEXT COMMENT 'Session Memo',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
     INDEX idx_goal_id (goal_id),

@@ -7,6 +7,7 @@ import java.util.List;
 public class FocusStatsDto {
     private Long goalId;
     private String goalTitle;
+    private Long totalMinutes;
     private Long last7DaysMinutes;
     private Long last30DaysMinutes;
     private List<DailyFocusRecord> dailyRecords;
