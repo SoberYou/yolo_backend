@@ -262,3 +262,72 @@
     }
   }
   ```
+
+## 4. 里程碑 (Milestone)
+
+### 4.1 创建里程碑
+- **URL**: `/milestones`
+- **Method**: `POST`
+- **Body**:
+  ```json
+  {
+    "goalId": 1,
+    "milestoneTitle": "Phase 1 Completion",
+    "milestoneDate": "2024-03-21",
+    "milestoneDesc": "Completed Module 1",
+    "ownFeel": "Feeling great!"
+  }
+  ```
+- **Response**: `ApiResponse<Milestone>`
+
+### 4.2 更新里程碑
+- **URL**: `/milestones`
+- **Method**: `PUT`
+- **Body**:
+  ```json
+  {
+    "id": 1,
+    "goalId": 1,
+    "milestoneTitle": "Phase 1 Completion (Revised)",
+    "milestoneDate": "2024-03-21",
+    "milestoneDesc": "Completed Module 1 with extra credits",
+    "ownFeel": "Feeling awesome!"
+  }
+  ```
+- **Response**: `ApiResponse<Milestone>`
+
+### 4.3 删除里程碑
+- **URL**: `/milestones/{id}`
+- **Method**: `DELETE`
+- **Response**: `ApiResponse<Void>`
+
+### 4.4 获取里程碑列表
+支持按目标ID筛选。
+- **URL**: `/milestones`
+- **Method**: `GET`
+- **Query Params**:
+  - `goalId` (可选): 筛选指定目标的里程碑
+- **Response**: `ApiResponse<List<Milestone>>`
+  ```json
+  {
+    "code": 200,
+    "message": "Success",
+    "data": [
+      {
+        "id": 1,
+        "goalId": 1,
+        "milestoneTitle": "Phase 1 Completion",
+        "milestoneDate": "2024-03-21",
+        "milestoneDesc": "Completed Module 1",
+        "ownFeel": "Feeling great!",
+        "createAt": "2024-03-21T10:00:00",
+        "updateAt": "2024-03-21T10:00:00"
+      }
+    ]
+  }
+  ```
+
+### 4.5 获取单个里程碑
+- **URL**: `/milestones/{id}`
+- **Method**: `GET`
+- **Response**: `ApiResponse<Milestone>`

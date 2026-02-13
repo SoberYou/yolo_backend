@@ -332,6 +332,148 @@
           }
         }
       }
+    },
+    "/api/milestones": {
+      "get": {
+        "tags": ["Milestone"],
+        "summary": "Get Milestone List",
+        "operationId": "getMilestoneList",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMilestone"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Milestone"],
+        "summary": "Create Milestone",
+        "operationId": "saveMilestone",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMilestone"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Milestone"],
+        "summary": "Update Milestone",
+        "operationId": "updateMilestone",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMilestone"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/milestones/{id}": {
+      "get": {
+        "tags": ["Milestone"],
+        "summary": "Get Milestone By ID",
+        "operationId": "getMilestoneById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMilestone"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Milestone"],
+        "summary": "Delete Milestone",
+        "operationId": "deleteMilestone",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -760,6 +902,95 @@
           },
           "minutes": {
             "type": "integer"
+          }
+        }
+      },
+      "Milestone": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "goalId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "milestoneDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "milestoneDesc": {
+            "type": "string"
+          },
+          "ownFeel": {
+            "type": "string"
+          },
+          "createAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updateAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "MilestoneRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "goalId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "milestoneDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "milestoneDesc": {
+            "type": "string"
+          },
+          "ownFeel": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseMilestone": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Milestone"
+          }
+        }
+      },
+      "ApiResponseListMilestone": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Milestone"
+            }
           }
         }
       }

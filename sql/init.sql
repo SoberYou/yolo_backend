@@ -42,3 +42,16 @@ CREATE TABLE IF NOT EXISTS focus_session (
     INDEX idx_goal_id (goal_id),
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Focus Records';
+
+-- 4. Milestone Table
+CREATE TABLE IF NOT EXISTS milestone (
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '自增ID',
+    goal_id INT DEFAULT NULL COMMENT '目标ID',
+    milestone_title VARCHAR(100) DEFAULT NULL COMMENT '里程碑标题',
+    milestone_date DATE DEFAULT NULL COMMENT '里程碑日期',
+    milestone_desc VARCHAR(255) DEFAULT NULL COMMENT '里程碑记录',
+    own_feel VARCHAR(255) DEFAULT NULL COMMENT '心情记录',
+    create_at DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_goal_id (goal_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Goal Milestones';
