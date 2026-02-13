@@ -84,6 +84,17 @@
         "tags": ["Goal"],
         "summary": "Get All Goals",
         "operationId": "getGoals",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by status (e.g. 'ARCHIVED')"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -118,6 +129,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseGoal"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Goal"],
+        "summary": "Delete Goal",
+        "operationId": "deleteGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -695,6 +734,11 @@
           "northStar": {
             "type": "string",
             "example": "Become a Senior Java Developer"
+          },
+          "status": {
+            "type": "string",
+            "example": "ACTIVE",
+            "description": "Status: ACTIVE, COMPLETED, ARCHIVED"
           }
         }
       },
@@ -916,6 +960,9 @@
             "type": "integer",
             "format": "int64"
           },
+          "milestoneTitle": {
+            "type": "string"
+          },
           "milestoneDate": {
             "type": "string",
             "format": "date"
@@ -946,6 +993,9 @@
           "goalId": {
             "type": "integer",
             "format": "int64"
+          },
+          "milestoneTitle": {
+            "type": "string"
           },
           "milestoneDate": {
             "type": "string",

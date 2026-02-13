@@ -19,13 +19,19 @@ public class GoalController {
 
     @PostMapping
     public ApiResponse<Goal> saveGoal(@RequestBody GoalSaveRequest request) {
-        Goal goal = goalService.saveGoal(request.getId(), request.getTitle(), request.getDescription(),request.getExpectedTotalHours(), request.getNorthStar());
+        Goal goal = goalService.saveGoal(request.getId(), request.getTitle(), request.getDescription(),request.getExpectedTotalHours(), request.getNorthStar(), request.getStatus());
         return ApiResponse.success(goal);
     }
 
+    @DeleteMapping("/{goalId}")
+    public ApiResponse<Void> deleteGoal(@PathVariable Long goalId) {
+        goalService.deleteGoal(goalId);
+        return ApiResponse.success(null);
+    }
+
     @GetMapping
-    public ApiResponse<List<GoalWithStatsDto>> getGoals() {
-        return ApiResponse.success(goalService.getGoals());
+    public ApiResponse<List<GoalWithStatsDto>> getGoals(@RequestParam(required = false) String status) {
+        return ApiResponse.success(goalService.getGoals(status));
     }
 
     @GetMapping("/{goalId}")
@@ -40,5 +46,6 @@ public class GoalController {
         private String description;
         private Integer expectedTotalHours;
         private String northStar;
+        private String status;
     }
 }

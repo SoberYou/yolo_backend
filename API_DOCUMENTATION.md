@@ -79,7 +79,8 @@
     "title": "学习 Java",
     "description": "掌握 Spring Boot 开发",
     "expectedTotalHours": 100,
-    "northStar": "成为高级 Java 工程师"
+    "northStar": "成为高级 Java 工程师",
+    "status": "ACTIVE" // 可选，状态: ACTIVE, COMPLETED, ARCHIVED
   }
   ```
 - **Response**: `ApiResponse<Goal>`
@@ -87,6 +88,8 @@
 ### 2.2 获取目标列表
 - **URL**: `/goals`
 - **Method**: `GET`
+- **Query Params**:
+  - `status` (可选): 筛选状态 (如 "ARCHIVED")。若不传，默认筛选非归档目标。
 - **Response**: `ApiResponse<List<GoalWithStatsDto>>`
   ```json
   {
@@ -112,6 +115,11 @@
 - **URL**: `/goals/{goalId}`
 - **Method**: `GET`
 - **Response**: `ApiResponse<Goal>`
+
+### 2.4 删除目标
+- **URL**: `/goals/{goalId}`
+- **Method**: `DELETE`
+- **Response**: `ApiResponse<Void>`
 
 ## 3. 专注 (Focus)
 

@@ -29,7 +29,7 @@ public class GoalService {
 
     private static final Long DEFAULT_USER_ID = 1L;
 
-    public Goal saveGoal(Long id, String title, String description, Integer expectedTotalHours, String northStar) {
+    public Goal saveGoal(Long id, String title, String description, Integer expectedTotalHours, String northStar, String status) {
         // Check title uniqueness
         QueryWrapper<Goal> query = new QueryWrapper<>();
         query.eq("title", title);
@@ -49,7 +49,7 @@ public class GoalService {
         } else {
             goal = new Goal();
             goal.setUserId(DEFAULT_USER_ID);
-            goal.setStatus("ACTIVE");
+            goal.setStatus(status != null ? status : "ACTIVE");
             goal.setCreatedAt(LocalDateTime.now());
         }
 
@@ -57,6 +57,9 @@ public class GoalService {
         goal.setDescription(description);
         goal.setExpectedTotalHours(expectedTotalHours);
         goal.setNorthStar(northStar);
+        if (status != null) {
+            goal.setStatus(status);
+        }
         goal.setUpdatedAt(LocalDateTime.now());
         
         if (id != null) {
@@ -67,8 +70,17 @@ public class GoalService {
         return goal;
     }
 
-    public List<GoalWithStatsDto> getGoals() {
+    public void deleteGoal(Long id) {
+        goalMapper.deleteById(id);
+    }
+
+    public List<GoalWithStatsDto> getGoals(String status) {
         QueryWrapper<Goal> query = new QueryWrapper<>();
+        if (status != null && !status.isEmpty()) {
+            query.eq("status", status);
+        } else {
+            query.ne("status", "ARCHIVED");
+        }
         query.orderByAsc("created_at");
         List<Goal> goals = goalMapper.selectList(query);
 
