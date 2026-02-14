@@ -46,6 +46,17 @@
         "tags": ["Life"],
         "summary": "Get Life Configuration",
         "operationId": "getLifeConfig",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -65,6 +76,17 @@
         "tags": ["Life"],
         "summary": "Get Life Status",
         "operationId": "getLifeStatus",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -85,6 +107,15 @@
         "summary": "Get All Goals",
         "operationId": "getGoals",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
           {
             "name": "status",
             "in": "query",
@@ -134,34 +165,6 @@
             }
           }
         }
-      },
-      "delete": {
-        "tags": ["Goal"],
-        "summary": "Delete Goal",
-        "operationId": "deleteGoal",
-        "parameters": [
-          {
-            "name": "goalId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/api/goals/{goalId}": {
@@ -187,6 +190,43 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseGoal"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Goal"],
+        "summary": "Delete Goal",
+        "operationId": "deleteGoal",
+        "parameters": [
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -259,6 +299,14 @@
         "operationId": "getRunningSession",
         "parameters": [
           {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "goalId",
             "in": "query",
             "required": false,
@@ -288,6 +336,14 @@
         "summary": "Get Focus Session List",
         "operationId": "getFocusList",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "goalId",
             "in": "query",
@@ -326,6 +382,14 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -348,6 +412,14 @@
         "summary": "Get Focus Statistics",
         "operationId": "getStatistics",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "goalId",
             "in": "query",
@@ -378,6 +450,14 @@
         "summary": "Get Milestone List",
         "operationId": "getMilestoneList",
         "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "goalId",
             "in": "query",
@@ -470,6 +550,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -498,6 +586,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -507,6 +603,35 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "WeChat Login",
+        "operationId": "login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
                 }
               }
             }
@@ -655,6 +780,11 @@
       "LifeConfigRequest": {
         "type": "object",
         "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          },
           "birthDate": {
             "type": "string",
             "format": "date",
@@ -718,6 +848,11 @@
             "type": "integer",
             "format": "int64",
             "example": 1
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
           },
           "title": {
             "type": "string",
@@ -793,6 +928,11 @@
       "FocusStartRequest": {
         "type": "object",
         "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          },
           "goalId": {
             "type": "integer",
             "format": "int64",
@@ -803,6 +943,11 @@
       "FocusEndRequest": {
         "type": "object",
         "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          },
           "id": {
             "type": "integer",
             "format": "int64"
@@ -990,6 +1135,11 @@
             "type": "integer",
             "format": "int32"
           },
+          "userId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 12345
+          },
           "goalId": {
             "type": "integer",
             "format": "int64"
@@ -1041,6 +1191,37 @@
             "items": {
               "$ref": "#/components/schemas/Milestone"
             }
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "openid": {
+            "type": "string"
+          },
+          "sessionKey": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

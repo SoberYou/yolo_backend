@@ -20,17 +20,20 @@ public class LifeService {
     @Autowired
     private LifeProfileMapper lifeProfileMapper;
 
-    private static final Long DEFAULT_USER_ID = 1L;
+    @Autowired
+    private UserService userService;
 
     @Transactional(rollbackFor = Exception.class)
-    public void configureLife(LocalDate birthDate, Integer expectedLifeYears, Integer energyLifeYears) {
+    public void configureLife(Long userId, LocalDate birthDate, Integer expectedLifeYears, Integer energyLifeYears) {
+        userService.getInternalUserId(userId);
+        
         QueryWrapper<LifeProfile> query = new QueryWrapper<>();
-        query.eq("user_id", DEFAULT_USER_ID);
+        query.eq("user_id", userId);
         LifeProfile profile = lifeProfileMapper.selectOne(query);
 
         if (profile == null) {
             profile = new LifeProfile();
-            profile.setUserId(DEFAULT_USER_ID);
+            profile.setUserId(userId);
             profile.setCreatedAt(LocalDateTime.now());
         }
         
@@ -46,9 +49,11 @@ public class LifeService {
         }
     }
 
-    public LifeStatusDto getLifeStatus() {
+    public LifeStatusDto getLifeStatus(Long userId) {
+        userService.getInternalUserId(userId);
+        
         QueryWrapper<LifeProfile> query = new QueryWrapper<>();
-        query.eq("user_id", DEFAULT_USER_ID);
+        query.eq("user_id", userId);
         LifeProfile profile = lifeProfileMapper.selectOne(query);
 
         if (profile == null) {
@@ -87,9 +92,11 @@ public class LifeService {
         return dto;
     }
 
-    public LifeConfigDto getLifeConfig() {
+    public LifeConfigDto getLifeConfig(Long userId) {
+        userService.getInternalUserId(userId);
+        
         QueryWrapper<LifeProfile> query = new QueryWrapper<>();
-        query.eq("user_id", DEFAULT_USER_ID);
+        query.eq("user_id", userId);
         LifeProfile profile = lifeProfileMapper.selectOne(query);
 
         if (profile == null) {

@@ -17,22 +17,23 @@ public class LifeController {
 
     @PostMapping("/configLife")
     public ApiResponse<Void> configLife(@RequestBody LifeConfigRequest request) {
-        lifeService.configureLife(request.getBirthDate(), request.getExpectedLifeYears(), request.getEnergyLifeYears());
+        lifeService.configureLife(request.getUserId(), request.getBirthDate(), request.getExpectedLifeYears(), request.getEnergyLifeYears());
         return ApiResponse.success(null);
     }
 
     @GetMapping("/getLifeConfig")
-    public ApiResponse<LifeService.LifeConfigDto> getLifeConfig() {
-        return ApiResponse.success(lifeService.getLifeConfig());
+    public ApiResponse<LifeService.LifeConfigDto> getLifeConfig(@RequestParam Long userId) {
+        return ApiResponse.success(lifeService.getLifeConfig(userId));
     }
 
     @GetMapping("/getLifeStatus")
-    public ApiResponse<LifeService.LifeStatusDto> getLifeStatus() {
-        return ApiResponse.success(lifeService.getLifeStatus());
+    public ApiResponse<LifeService.LifeStatusDto> getLifeStatus(@RequestParam Long userId) {
+        return ApiResponse.success(lifeService.getLifeStatus(userId));
     }
 
     @Data
     public static class LifeConfigRequest {
+        private Long userId;
         private LocalDate birthDate;
         private Integer expectedLifeYears;
         private Integer energyLifeYears;

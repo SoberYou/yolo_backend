@@ -20,7 +20,7 @@ public class FocusController {
 
     @PostMapping("/start")
     public ApiResponse<FocusSession> startFocus(@RequestBody FocusStartRequest request) {
-        return ApiResponse.success(focusService.startFocus(request.getGoalId()));
+        return ApiResponse.success(focusService.startFocus(request.getUserId(), request.getGoalId()));
     }
 
     @PostMapping("/end")
@@ -28,36 +28,38 @@ public class FocusController {
         if (request == null) {
             request = new FocusEndRequest();
         }
-        return ApiResponse.success(focusService.endFocus(request.getId(), request.getStartTime(), request.getEndTime(), request.getDurationMinutes(), request.getMemo()));
+        return ApiResponse.success(focusService.endFocus(request.getUserId(), request.getId(), request.getStartTime(), request.getEndTime(), request.getDurationMinutes(), request.getMemo()));
     }
 
     @GetMapping("/running")
-    public ApiResponse<FocusSession> getRunningSession(@RequestParam(required = false) Long goalId) {
-        return ApiResponse.success(focusService.getRunningSession(goalId));
+    public ApiResponse<FocusSession> getRunningSession(@RequestParam Long userId, @RequestParam(required = false) Long goalId) {
+        return ApiResponse.success(focusService.getRunningSession(userId, goalId));
     }
 
     @GetMapping("/statistics")
-    public ApiResponse<FocusStatsDto> getStatistics(@RequestParam Long goalId) {
-        return ApiResponse.success(focusService.getStatistics(goalId));
+    public ApiResponse<FocusStatsDto> getStatistics(@RequestParam Long userId, @RequestParam Long goalId) {
+        return ApiResponse.success(focusService.getStatistics(userId, goalId));
     }
 
     @GetMapping
-    public ApiResponse<List<FocusSessionDto>> getFocusList(@RequestParam(required = false) Long goalId) {
-        return ApiResponse.success(focusService.getFocusSessionList(goalId));
+    public ApiResponse<List<FocusSessionDto>> getFocusList(@RequestParam Long userId, @RequestParam(required = false) Long goalId) {
+        return ApiResponse.success(focusService.getFocusSessionList(userId, goalId));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse<FocusSessionDto> getFocusById(@PathVariable Long id) {
-        return ApiResponse.success(focusService.getFocusSessionById(id));
+    public ApiResponse<FocusSessionDto> getFocusById(@RequestParam Long userId, @PathVariable Long id) {
+        return ApiResponse.success(focusService.getFocusSessionById(userId, id));
     }
 
     @Data
     public static class FocusStartRequest {
+        private Long userId;
         private Long goalId;
     }
 
     @Data
     public static class FocusEndRequest {
+        private Long userId;
         private Long id;
         private java.time.LocalDateTime startTime;
         private java.time.LocalDateTime endTime;

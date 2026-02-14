@@ -19,19 +19,23 @@ public class GoalController {
 
     @PostMapping
     public ApiResponse<Goal> saveGoal(@RequestBody GoalSaveRequest request) {
-        Goal goal = goalService.saveGoal(request.getId(), request.getTitle(), request.getDescription(),request.getExpectedTotalHours(), request.getNorthStar(), request.getStatus());
-        return ApiResponse.success(goal);
-    }
-
-    @DeleteMapping("/{goalId}")
-    public ApiResponse<Void> deleteGoal(@PathVariable Long goalId) {
-        goalService.deleteGoal(goalId);
-        return ApiResponse.success(null);
+        if (request.getTitle() == null || request.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        return ApiResponse.success(goalService.saveGoal(
+                request.getUserId(),
+                request.getId(),
+                request.getTitle(),
+                request.getDescription(),
+                request.getExpectedTotalHours(),
+                request.getNorthStar(),
+                request.getStatus()
+        ));
     }
 
     @GetMapping
-    public ApiResponse<List<GoalWithStatsDto>> getGoals(@RequestParam(required = false) String status) {
-        return ApiResponse.success(goalService.getGoals(status));
+    public ApiResponse<List<GoalWithStatsDto>> getGoals(@RequestParam Long userId, @RequestParam(required = false) String status) {
+        return ApiResponse.success(goalService.getGoals(userId, status));
     }
 
     @GetMapping("/{goalId}")
@@ -39,9 +43,16 @@ public class GoalController {
         return ApiResponse.success(goalService.getGoalById(goalId));
     }
 
+    @DeleteMapping("/{goalId}")
+    public ApiResponse<Void> deleteGoal(@PathVariable Long goalId, @RequestParam Long userId) {
+        goalService.deleteGoal(userId, goalId);
+        return ApiResponse.success(null);
+    }
+
     @Data
     public static class GoalSaveRequest {
         private Long id;
+        private Long userId;
         private String title;
         private String description;
         private Integer expectedTotalHours;

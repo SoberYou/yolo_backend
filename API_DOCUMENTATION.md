@@ -22,6 +22,7 @@
 - **Body**:
   ```json
   {
+    "userId": 12345, // 用户ID (Long)
     "birthDate": "1995-05-20", // 出生日期 (YYYY-MM-DD)
     "expectedLifeYears": 80,   // 预期寿命 (年)
     "energyLifeYears": 60      // 精力寿命 (年)
@@ -34,6 +35,8 @@
 
 - **URL**: `/life/getLifeConfig`
 - **Method**: `GET`
+- **Query Params**:
+  - `userId`: 用户ID (Long)
 - **Response**: `ApiResponse<LifeConfigDto>`
   ```json
   {
@@ -52,6 +55,8 @@
 
 - **URL**: `/life/getLifeStatus`
 - **Method**: `GET`
+- **Query Params**:
+  - `userId`: 用户ID (Long)
 - **Response**: `ApiResponse<LifeStatusDto>`
   ```json
   {
@@ -76,6 +81,7 @@
   ```json
   {
     "id": 1, // 可选，若存在则更新，若为空则创建
+    "userId": 12345, // 用户ID (Long)
     "title": "学习 Java",
     "description": "掌握 Spring Boot 开发",
     "expectedTotalHours": 100,
@@ -89,6 +95,7 @@
 - **URL**: `/goals`
 - **Method**: `GET`
 - **Query Params**:
+  - `userId`: 用户ID (Long)
   - `status` (可选): 筛选状态 (如 "ARCHIVED")。若不传，默认筛选非归档目标。
 - **Response**: `ApiResponse<List<GoalWithStatsDto>>`
   ```json
@@ -119,6 +126,8 @@
 ### 2.4 删除目标
 - **URL**: `/goals/{goalId}`
 - **Method**: `DELETE`
+- **Query Params**:
+  - `userId`: 用户唯一标识
 - **Response**: `ApiResponse<Void>`
 
 ## 3. 专注 (Focus)
@@ -131,6 +140,7 @@
 - **Body**:
   ```json
   {
+    "userId": 12345, // 用户ID (Long)
     "goalId": 1
   }
   ```
@@ -144,6 +154,7 @@
 - **Request Body**: `application/json` (可选)
   ```json
   {
+    "userId": 12345, // 用户ID (Long)
     "id": 101, // 可选，若不传则查找当前 RUNNING 状态的会话
     "startTime": "2024-03-20T14:00:00", // 可选，修改开始时间
     "endTime": "2024-03-20T14:45:00", // 可选，指定结束时间
@@ -175,6 +186,7 @@
 - **URL**: `/focus/running`
 - **Method**: `GET`
 - **Query Params**:
+  - `userId`: 用户ID (Long)
   - `goalId` (可选): 筛选指定目标的进行中会话
 - **Response**: `ApiResponse<FocusSession>`
   ```json
@@ -197,33 +209,15 @@
 - **URL**: `/focus`
 - **Method**: `GET`
 - **Query Params**:
+  - `userId`: 用户ID (Long)
   - `goalId` (可选): 筛选指定目标的专注记录
 - **Response**: `ApiResponse<List<FocusSessionDto>>`
-  ```json
-  {
-    "code": 200,
-    "message": "Success",
-    "data": [
-      {
-        "id": 101,
-        "goalId": 1,
-        "goalTitle": "学习 Java",
-        "startTime": "2024-03-20T14:00:00",
-        "endTime": "2024-03-20T14:45:00",
-        "status": "COMPLETED",
-        "durationMinutes": 45,
-        "memo": "Completed the chapter on Spring Security",
-        ...
-      }
-    ]
-  }
-  ```
 
-### 3.5 获取单个专注记录
-获取指定 ID 的专注记录详情。
-
+### 3.5 获取单个专注会话
 - **URL**: `/focus/{id}`
 - **Method**: `GET`
+- **Query Params**:
+  - `userId`: 用户ID (Long)
 - **Response**: `ApiResponse<FocusSessionDto>`
   ```json
   {
@@ -249,7 +243,8 @@
 - **URL**: `/focus/statistics`
 - **Method**: `GET`
 - **Query Params**:
-  - `goalId` (必填): 指定目标ID
+  - `userId`: 用户ID (Long) (必填)
+  - `goalId`: 指定目标ID (必填)
 - **Response**: `ApiResponse<FocusStatsDto>`
   ```json
   {
@@ -279,6 +274,7 @@
 - **Body**:
   ```json
   {
+    "userId": 12345, // 用户ID (Long)
     "goalId": 1,
     "milestoneTitle": "Phase 1 Completion",
     "milestoneDate": "2024-03-21",
@@ -295,6 +291,7 @@
   ```json
   {
     "id": 1,
+    "userId": 12345, // 用户ID (Long)
     "goalId": 1,
     "milestoneTitle": "Phase 1 Completion (Revised)",
     "milestoneDate": "2024-03-21",
@@ -307,6 +304,8 @@
 ### 4.3 删除里程碑
 - **URL**: `/milestones/{id}`
 - **Method**: `DELETE`
+- **Query Params**:
+  - `userId`: 用户ID (Long)
 - **Response**: `ApiResponse<Void>`
 
 ### 4.4 获取里程碑列表
@@ -314,6 +313,7 @@
 - **URL**: `/milestones`
 - **Method**: `GET`
 - **Query Params**:
+  - `userId`: 用户ID (Long) (必填)
   - `goalId` (可选): 筛选指定目标的里程碑
 - **Response**: `ApiResponse<List<Milestone>>`
   ```json
@@ -338,4 +338,31 @@
 ### 4.5 获取单个里程碑
 - **URL**: `/milestones/{id}`
 - **Method**: `GET`
+- **Query Params**:
+  - `userId`: 用户ID (Long)
 - **Response**: `ApiResponse<Milestone>`
+
+## 5. 认证 (Auth)
+
+### 5.1 微信静默登录
+使用微信小程序 wx.login 获取的 code 进行登录。
+
+- **URL**: `/auth/login`
+- **Method**: `POST`
+- **Body**:
+  ```json
+  {
+    "code": "0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p"
+  }
+  ```
+- **Response**: `User`
+  ```json
+  {
+    "id": 1,
+    "openid": "wx_openid_sample",
+    "sessionKey": "wx_session_key_sample",
+    "createdAt": "2024-03-20T10:00:00",
+    "updatedAt": "2024-03-20T10:00:00"
+  }
+  ```
+

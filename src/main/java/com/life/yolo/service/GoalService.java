@@ -27,12 +27,16 @@ public class GoalService {
     @Autowired
     private FocusSessionMapper focusSessionMapper;
 
-    private static final Long DEFAULT_USER_ID = 1L;
+    @Autowired
+    private UserService userService;
 
-    public Goal saveGoal(Long id, String title, String description, Integer expectedTotalHours, String northStar, String status) {
+    public Goal saveGoal(Long userId, Long id, String title, String description, Integer expectedTotalHours, String northStar, String status) {
+        userService.getInternalUserId(userId); // Validate user existence
+
         // Check title uniqueness
         QueryWrapper<Goal> query = new QueryWrapper<>();
         query.eq("title", title);
+        query.eq("user_id", userId); // Check uniqueness within user scope
         if (id != null) {
             query.ne("id", id);
         }
@@ -46,9 +50,12 @@ public class GoalService {
             if (goal == null) {
                 throw new IllegalArgumentException("Goal not found with id: " + id);
             }
+            if (!goal.getUserId().equals(userId)) {
+                throw new IllegalArgumentException("Goal does not belong to user");
+            }
         } else {
             goal = new Goal();
-            goal.setUserId(DEFAULT_USER_ID);
+            goal.setUserId(userId);
             goal.setStatus(status != null ? status : "ACTIVE");
             goal.setCreatedAt(LocalDateTime.now());
         }
@@ -70,24 +77,33 @@ public class GoalService {
         return goal;
     }
 
-    public void deleteGoal(Long id) {
-        goalMapper.deleteById(id);
+    public void deleteGoal(Long userId, Long id) {
+        userService.getInternalUserId(userId);
+        Goal goal = goalMapper.selectById(id);
+        if (goal != null && goal.getUserId().equals(userId)) {
+            goalMapper.deleteById(id);
+        } else {
+             throw new IllegalArgumentException("Goal not found or access denied");
+        }
     }
 
-    public List<GoalWithStatsDto> getGoals(String status) {
+    public List<GoalWithStatsDto> getGoals(Long userId, String status) {
+        userService.getInternalUserId(userId);
+
         QueryWrapper<Goal> query = new QueryWrapper<>();
+        query.eq("user_id", userId);
         if (status != null && !status.isEmpty()) {
             query.eq("status", status);
         } else {
             query.ne("status", "ARCHIVED");
         }
-        query.orderByAsc("created_at");
+        query.orderByDesc("created_at");
         List<Goal> goals = goalMapper.selectList(query);
 
         // Get stats for last 7 days
-        LocalDate sevenDaysAgo = LocalDate.now().minusDays(7);
+        LocalDateTime sevenDaysAgo = LocalDate.now().minusDays(7).atStartOfDay();
         QueryWrapper<FocusSession> sessionQuery = new QueryWrapper<>();
-        sessionQuery.gt("start_date", sevenDaysAgo);
+        sessionQuery.gt("start_time", sevenDaysAgo);
         sessionQuery.eq("status", "COMPLETED");
         
         List<FocusSession> recentSessions = focusSessionMapper.selectList(sessionQuery);
@@ -97,7 +113,7 @@ public class GoalService {
                 .filter(s -> s.getGoalId() != null && s.getDurationMinutes() != null)
                 .collect(Collectors.groupingBy(
                         FocusSession::getGoalId,
-                        Collectors.summingLong(FocusSession::getDurationMinutes)
+                        Collectors.summingLong(s -> s.getDurationMinutes())
                 ));
 
         // Convert to DTO
