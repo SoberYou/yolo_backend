@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -57,7 +58,7 @@ public class AuthService {
 
             if (user == null) {
                 user = new User();
-                user.setUserId(12344L);
+                user.setUserId(generateUniqueUserId());
                 user.setOpenid(openid);
                 user.setSessionKey(sessionKey);
                 user.setCreatedAt(LocalDateTime.now());
@@ -75,6 +76,19 @@ public class AuthService {
         } catch (Exception e) {
             log.error("WeChat login error", e);
             throw new RuntimeException("WeChat login failed", e);
+        }
+    }
+
+    private Long generateUniqueUserId() {
+        while (true) {
+            // Generate random number up to 8 digits (1 to 99999999)
+            long userId = ThreadLocalRandom.current().nextLong(1, 100000000);
+            
+            QueryWrapper<User> query = new QueryWrapper<>();
+            query.eq("user_id", userId);
+            if (userMapper.selectCount(query) == 0) {
+                return userId;
+            }
         }
     }
 }

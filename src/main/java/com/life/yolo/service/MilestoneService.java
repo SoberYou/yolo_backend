@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,7 +97,7 @@ public class MilestoneService {
             goalQuery.eq("user_id", userId);
             List<Goal> goals = goalMapper.selectList(goalQuery);
             if (goals.isEmpty()) {
-                return List.of();
+                return Collections.emptyList();
             }
             List<Long> goalIds = goals.stream().map(Goal::getId).collect(Collectors.toList());
             query.in("goal_id", goalIds);
