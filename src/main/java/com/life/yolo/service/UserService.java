@@ -1,7 +1,6 @@
 package com.life.yolo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.life.yolo.entity.LifeProfile;
 import com.life.yolo.entity.User;
 import com.life.yolo.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
