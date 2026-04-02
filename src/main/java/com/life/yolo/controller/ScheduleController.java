@@ -22,24 +22,30 @@ public class ScheduleController {
 
     @PostMapping("/getActivityTypes")
     public ApiResponse<List<ScheduleActivityType>> getActivityTypes(
+            @RequestParam Long userId,
             @RequestParam(required = false) String typeName) {
-        return ApiResponse.success(scheduleService.getActivityTypes(typeName));
+        return ApiResponse.success(scheduleService.getActivityTypes(userId, typeName));
     }
 
     @PostMapping("/createActivityType")
-    public ApiResponse<ScheduleActivityType> createActivityType(@RequestBody ScheduleActivityType type) {
-        return ApiResponse.success(scheduleService.createActivityType(type));
+    public ApiResponse<ScheduleActivityType> createActivityType(
+            @RequestParam Long userId,
+            @RequestBody ScheduleActivityType type) {
+        return ApiResponse.success(scheduleService.createActivityType(type, userId));
     }
 
     @PostMapping("/updateActivityType")
     public ApiResponse<ScheduleActivityType> updateActivityType(
+            @RequestParam Long userId,
             @RequestBody ScheduleActivityType type) {
-        return ApiResponse.success(scheduleService.updateActivityType(type));
+        return ApiResponse.success(scheduleService.updateActivityType(type, userId));
     }
 
     @PostMapping("/deleteActivityType")
-    public ApiResponse<Void> deleteActivityType(@RequestParam Long id) {
-        scheduleService.deleteActivityType(id);
+    public ApiResponse<Void> deleteActivityType(
+            @RequestParam Long id,
+            @RequestParam Long userId) {
+        scheduleService.deleteActivityType(id, userId);
         return ApiResponse.success(null);
     }
 
@@ -47,20 +53,26 @@ public class ScheduleController {
 
     @PostMapping("/getRecords")
     public ApiResponse<List<ScheduleRecord>> getRecords(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate bizDate,
+            @RequestParam Long userId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) String recordType) {
-        return ApiResponse.success(scheduleService.getRecords(bizDate, recordType));
+        return ApiResponse.success(scheduleService.getRecords(userId, startDate, endDate, recordType));
     }
 
     @PostMapping("/deleteRecord")
-    public ApiResponse<Void> deleteRecord(@RequestParam Long id) {
-        scheduleService.deleteRecord(id);
+    public ApiResponse<Void> deleteRecord(
+            @RequestParam Long id,
+            @RequestParam Long userId) {
+        scheduleService.deleteRecord(id, userId);
         return ApiResponse.success(null);
     }
 
     @PostMapping("/batchSaveRecords")
-    public ApiResponse<Void> batchSaveRecords(@RequestBody List<ScheduleRecord> records) {
-        scheduleService.batchSaveRecords(records);
+    public ApiResponse<Void> batchSaveRecords(
+            @RequestParam Long userId,
+            @RequestBody List<ScheduleRecord> records) {
+        scheduleService.batchSaveRecords(userId, records);
         return ApiResponse.success(null);
     }
 }

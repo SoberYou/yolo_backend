@@ -25,6 +25,16 @@
         "summary": "Get schedule activity types",
         "parameters": [
           {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          },
+          {
             "name": "typeName",
             "in": "query",
             "required": false,
@@ -57,6 +67,18 @@
           "Schedule"
         ],
         "summary": "Create a new schedule activity type",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -87,6 +109,18 @@
           "Schedule"
         ],
         "summary": "Update an existing schedule activity type",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -126,6 +160,16 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
           }
         ],
         "responses": {
@@ -143,14 +187,34 @@
         "summary": "Get schedule records",
         "parameters": [
           {
-            "name": "bizDate",
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          },
+          {
+            "name": "startDate",
             "in": "query",
             "required": false,
             "schema": {
               "type": "string",
               "format": "date"
             },
-            "description": "Filter by business date (YYYY-MM-DD)"
+            "description": "Filter by start date (YYYY-MM-DD)"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter by end date (YYYY-MM-DD)"
           },
           {
             "name": "recordType",
@@ -194,6 +258,16 @@
               "type": "integer",
               "format": "int64"
             }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
           }
         ],
         "responses": {
@@ -209,6 +283,18 @@
           "Schedule"
         ],
         "summary": "Batch save (insert or update) schedule records",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -236,6 +322,10 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
             "type": "integer",
             "format": "int64"
           },
@@ -270,6 +360,10 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "userId": {
             "type": "integer",
             "format": "int64"
           },

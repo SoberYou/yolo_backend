@@ -21,6 +21,7 @@
 - **URL**: `/getActivityTypes`
 - **Method**: `POST`
 - **Query Params**:
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
   - `typeName` (String, 可选): 根据类型名称模糊搜索
 - **Body**: 空
 - **Response**: `List<ScheduleActivityType>`
@@ -48,6 +49,8 @@
 
 - **URL**: `/createActivityType`
 - **Method**: `POST`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
 - **Body**:
   ```json
   {
@@ -65,6 +68,8 @@
 
 - **URL**: `/updateActivityType`
 - **Method**: `POST`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
 - **Body**:
   ```json
   {
@@ -85,6 +90,7 @@
 - **Method**: `POST`
 - **Query Params**:
   - `id` (Long, 必填): 活动类型ID
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
 - **Response**: `Void`
 
 ---
@@ -97,7 +103,9 @@
 - **URL**: `/getRecords`
 - **Method**: `POST`
 - **Query Params**:
-  - `bizDate` (String, 可选): 业务日期, 格式 `YYYY-MM-DD`
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
+  - `startDate` (String, 可选): 开始日期, 格式 `YYYY-MM-DD`
+  - `endDate` (String, 可选): 结束日期, 格式 `YYYY-MM-DD`
   - `recordType` (String, 可选): 记录类型 (如 `plan` 计划, `actual` 实际)
 - **Response**: `List<ScheduleRecord>`
   ```json
@@ -123,6 +131,8 @@
 
 - **URL**: `/batchSaveRecords`
 - **Method**: `POST`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
 - **Body**: `List<ScheduleRecord>` 数组
   ```json
   [
@@ -149,4 +159,5 @@
 - **Method**: `POST`
 - **Query Params**:
   - `id` (Long, 必填): 日程记录ID
+  - `userId` (Long, 必填): 用户ID，用于数据隔离
 - **Response**: `Void`

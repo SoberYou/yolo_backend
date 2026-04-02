@@ -13,6 +13,8 @@ public class ScheduleActivityType {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    private Long userId;
+
     private String typeCode;
 
     private String typeName;

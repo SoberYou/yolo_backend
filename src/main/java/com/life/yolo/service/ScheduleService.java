@@ -25,8 +25,9 @@ public class ScheduleService {
 
     // --- ScheduleActivityType ---
 
-    public List<ScheduleActivityType> getActivityTypes(String typeName) {
+    public List<ScheduleActivityType> getActivityTypes(Long userId, String typeName) {
         QueryWrapper<ScheduleActivityType> query = new QueryWrapper<>();
+        query.eq("user_id", userId);
         if (StringUtils.hasText(typeName)) {
             query.like("type_name", typeName);
         }
@@ -34,48 +35,59 @@ public class ScheduleService {
         return activityTypeMapper.selectList(query);
     }
 
-    public ScheduleActivityType createActivityType(ScheduleActivityType type) {
+    public ScheduleActivityType createActivityType(ScheduleActivityType type, Long userId) {
+        type.setUserId(userId);
         type.setCreateTime(LocalDateTime.now());
         type.setUpdateTime(LocalDateTime.now());
         activityTypeMapper.insert(type);
         return type;
     }
 
-    public ScheduleActivityType updateActivityType(ScheduleActivityType type) {
+    public ScheduleActivityType updateActivityType(ScheduleActivityType type, Long userId) {
+        QueryWrapper<ScheduleActivityType> query = new QueryWrapper<>();
+        query.eq("id", type.getId()).eq("user_id", userId);
         type.setUpdateTime(LocalDateTime.now());
-        activityTypeMapper.updateById(type);
+        activityTypeMapper.update(type, query);
         return type;
     }
 
-    public void deleteActivityType(Long id) {
-        activityTypeMapper.deleteById(id);
+    public void deleteActivityType(Long id, Long userId) {
+        QueryWrapper<ScheduleActivityType> query = new QueryWrapper<>();
+        query.eq("id", id).eq("user_id", userId);
+        activityTypeMapper.delete(query);
     }
 
     // --- ScheduleRecord ---
 
-    public List<ScheduleRecord> getRecords(LocalDate bizDate, String recordType) {
+    public List<ScheduleRecord> getRecords(Long userId, LocalDate startDate, LocalDate endDate, String recordType) {
         QueryWrapper<ScheduleRecord> query = new QueryWrapper<>();
-        if (bizDate != null) {
-            query.eq("biz_date", bizDate);
+        query.eq("user_id", userId);
+        if (startDate != null) {
+            query.ge("biz_date", startDate);
+        }
+        if (endDate != null) {
+            query.le("biz_date", endDate);
         }
         if (StringUtils.hasText(recordType)) {
             query.eq("record_type", recordType);
         }
-        query.orderByAsc("time_slot");
+        query.orderByAsc("biz_date").orderByAsc("time_slot");
         return recordMapper.selectList(query);
     }
 
-    public void deleteRecord(Long id) {
-        recordMapper.deleteById(id);
+    public void deleteRecord(Long id, Long userId) {
+        QueryWrapper<ScheduleRecord> query = new QueryWrapper<>();
+        query.eq("id", id).eq("user_id", userId);
+        recordMapper.delete(query);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void batchSaveRecords(List<ScheduleRecord> records) {
+    public void batchSaveRecords(Long userId, List<ScheduleRecord> records) {
         if (records == null || records.isEmpty()) {
             return;
         }
 
-        // Validate records
+        // Validate and set userId for records
         for (ScheduleRecord record : records) {
             if (record.getBizDate() == null || record.getTimeSlot() == null) {
                 throw new IllegalArgumentException("bizDate and timeSlot are required for saving schedule record");
@@ -83,6 +95,7 @@ public class ScheduleService {
             if (!StringUtils.hasText(record.getRecordType())) {
                 record.setRecordType(""); // default to empty string if null or empty to satisfy DB constraints if needed
             }
+            record.setUserId(userId);
         }
 
         // Use mapper's ON DUPLICATE KEY UPDATE method

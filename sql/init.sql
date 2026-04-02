@@ -65,3 +65,34 @@ CREATE TABLE IF NOT EXISTS user (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Update Time',
     INDEX idx_openid (openid)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User Information';
+
+-- 6. Schedule Activity Type Table
+CREATE TABLE `schedule_activity_type` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `type_code` VARCHAR(50) NOT NULL COMMENT '类型编码',
+  `type_name` VARCHAR(50) NOT NULL COMMENT '类型名称',
+  `color` VARCHAR(20) NOT NULL COMMENT '颜色',
+  `sort` INT DEFAULT 0 COMMENT '排序',
+  `enable_flag` TINYINT DEFAULT 1 COMMENT '是否启用',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_type_code` (`user_id`, `type_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日程事项类型表';
+
+-- 7. Schedule Record Table
+CREATE TABLE `schedule_record` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `biz_date` DATE NOT NULL COMMENT '日期',
+  `time_slot` INT NOT NULL COMMENT '时间槽0-47',
+  `record_type` VARCHAR(10) NOT NULL COMMENT 'plan/actual',
+  `activity_type` VARCHAR(50) COMMENT '活动类型',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_date_slot_type`
+  (`user_id`,`biz_date`,`time_slot`,`record_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日程记录表';
+
