@@ -113,7 +113,7 @@ public class GoalService {
                 .filter(s -> s.getGoalId() != null && s.getDurationMinutes() != null)
                 .collect(Collectors.groupingBy(
                         FocusSession::getGoalId,
-                        Collectors.summingLong(s -> s.getDurationMinutes())
+                        Collectors.summingLong(FocusSession::getDurationMinutes)
                 ));
 
         // Convert to DTO

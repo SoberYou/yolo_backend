@@ -7,7 +7,6 @@ import com.life.yolo.dto.GoalWithStatsDto;
 import com.life.yolo.entity.FocusSession;
 import com.life.yolo.entity.Goal;
 import com.life.yolo.mapper.FocusSessionMapper;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
