@@ -371,9 +371,11 @@
             "type": "string",
             "format": "date"
           },
-          "timeSlot": {
-            "type": "integer",
-            "format": "int32"
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
           },
           "recordType": {
             "type": "string"

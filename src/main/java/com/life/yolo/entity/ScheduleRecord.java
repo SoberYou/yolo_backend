@@ -18,9 +18,11 @@ public class ScheduleRecord {
 
     private LocalDate bizDate;
 
-    private Integer timeSlot;
-
     private String recordType;
+
+    private String startTime;
+
+    private String endTime;
 
     private String activityType;
 

@@ -71,7 +71,7 @@ public class ScheduleService {
         if (StringUtils.hasText(recordType)) {
             query.eq("record_type", recordType);
         }
-        query.orderByAsc("biz_date").orderByAsc("time_slot");
+        query.orderByAsc("biz_date").orderByAsc("start_time");
         return recordMapper.selectList(query);
     }
 
@@ -89,8 +89,8 @@ public class ScheduleService {
 
         // Validate and set userId for records
         for (ScheduleRecord record : records) {
-            if (record.getBizDate() == null || record.getTimeSlot() == null) {
-                throw new IllegalArgumentException("bizDate and timeSlot are required for saving schedule record");
+            if (record.getBizDate() == null || record.getStartTime() == null || record.getEndTime() == null) {
+                throw new IllegalArgumentException("bizDate, startTime and endTime are required for saving schedule record");
             }
             if (!StringUtils.hasText(record.getRecordType())) {
                 record.setRecordType(""); // default to empty string if null or empty to satisfy DB constraints if needed
@@ -100,5 +100,17 @@ public class ScheduleService {
 
         // Use mapper's ON DUPLICATE KEY UPDATE method
         recordMapper.batchSaveRecords(records);
+
+        // Delete records where activity_type is empty to avoid dirty data
+        List<LocalDate> bizDates = records.stream().map(ScheduleRecord::getBizDate).distinct().collect(Collectors.toList());
+        List<String> recordTypes = records.stream().map(ScheduleRecord::getRecordType).distinct().collect(Collectors.toList());
+
+        QueryWrapper<ScheduleRecord> deleteQuery = new QueryWrapper<>();
+        deleteQuery.eq("user_id", userId)
+                .in("biz_date", bizDates)
+                .in("record_type", recordTypes)
+                .and(w -> w.isNull("activity_type").or().eq("activity_type", ""));
+        
+        recordMapper.delete(deleteQuery);
     }
 }

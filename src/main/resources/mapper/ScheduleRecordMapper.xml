@@ -4,14 +4,15 @@
 
     <insert id="batchSaveRecords" parameterType="java.util.List">
         INSERT INTO schedule_record (
-            user_id, biz_date, time_slot, record_type, activity_type, create_time, update_time
+            user_id, biz_date, record_type, start_time, end_time, activity_type, create_time, update_time
         ) VALUES
         <foreach collection="list" item="record" separator=",">
             (
                 #{record.userId},
                 #{record.bizDate},
-                #{record.timeSlot},
                 #{record.recordType},
+                #{record.startTime},
+                #{record.endTime},
                 #{record.activityType},
                 NOW(),
                 NOW()

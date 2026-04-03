@@ -116,7 +116,8 @@
       {
         "id": 101,
         "bizDate": "2023-10-25",
-        "timeSlot": 18, // 第18个半小时 (09:00 - 09:30)
+        "startTime": "09:00",
+        "endTime": "10:30",
         "recordType": "plan",
         "activityType": "WORK",
         "createTime": "2023-10-25T08:00:00",
@@ -127,7 +128,7 @@
   ```
 
 ### 2.2 批量保存日程记录
-批量新增或更新日程记录。如果库中已存在相同 `bizDate`, `timeSlot`, `recordType` 的记录，则更新其 `activityType`；否则插入新记录。（支持 `recordType` 为空或不传，将默认处理为空字符串）
+批量新增或更新日程记录。如果库中已存在相同 `bizDate`, `recordType`, `startTime`, `endTime` 的记录，则更新其 `activityType`；否则插入新记录。（支持 `recordType` 为空或不传，将默认处理为空字符串）
 
 - **URL**: `/batchSaveRecords`
 - **Method**: `POST`
@@ -138,13 +139,15 @@
   [
     {
       "bizDate": "2023-10-25", // 必填
-      "timeSlot": 18,          // 必填 (0-47)
+      "startTime": "09:00",    // 必填
+      "endTime": "10:30",      // 必填
       "recordType": "plan",    // 可填为空
       "activityType": "WORK"
     },
     {
       "bizDate": "2023-10-25",
-      "timeSlot": 19,
+      "startTime": "10:30",
+      "endTime": "11:00",
       "recordType": "plan",
       "activityType": "WORK"
     }
