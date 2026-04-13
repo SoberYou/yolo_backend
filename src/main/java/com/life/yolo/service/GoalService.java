@@ -2,6 +2,7 @@ package com.life.yolo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.life.yolo.dto.GoalWithStatsDto;
+import com.life.yolo.dto.GoalScheduleRecordDto;
 import com.life.yolo.entity.FocusSession;
 import com.life.yolo.entity.Goal;
 import com.life.yolo.mapper.FocusSessionMapper;
@@ -13,10 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.life.yolo.mapper.GoalActivityTypeRelationMapper;
 import com.life.yolo.entity.GoalActivityTypeRelation;
+import com.life.yolo.mapper.ScheduleRecordMapper;
+import com.life.yolo.entity.ScheduleRecord;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +38,9 @@ public class GoalService {
 
     @Autowired
     private GoalActivityTypeRelationMapper goalActivityTypeRelationMapper;
+
+    @Autowired
+    private ScheduleRecordMapper scheduleRecordMapper;
 
     @Autowired
     private UserService userService;
@@ -107,21 +115,32 @@ public class GoalService {
         query.orderByDesc("created_at");
         List<Goal> goals = goalMapper.selectList(query);
 
-        // Get stats for last 7 days
-        LocalDateTime sevenDaysAgo = LocalDate.now().minusDays(7).atStartOfDay();
-        QueryWrapper<FocusSession> sessionQuery = new QueryWrapper<>();
-        sessionQuery.gt("start_time", sevenDaysAgo);
-        sessionQuery.eq("status", "COMPLETED");
+        // Get stats for last 7 days from schedule_record
+        LocalDate today = LocalDate.now();
+        LocalDate sevenDaysAgoDate = today.minusDays(7);
         
-        List<FocusSession> recentSessions = focusSessionMapper.selectList(sessionQuery);
+        List<GoalScheduleRecordDto> recentRecords = scheduleRecordMapper.selectRecentRecordsWithGoalId(userId, sevenDaysAgoDate, today);
         
-        // Group by goalId and sum minutes
-        Map<Long, Long> statsMap = recentSessions.stream()
-                .filter(s -> s.getGoalId() != null && s.getDurationMinutes() != null)
-                .collect(Collectors.groupingBy(
-                        FocusSession::getGoalId,
-                        Collectors.summingLong(FocusSession::getDurationMinutes)
-                ));
+        Map<Long, Long> statsMap = new java.util.HashMap<>();
+        
+        for (GoalScheduleRecordDto record : recentRecords) {
+            if (record.getStartTime() == null || record.getEndTime() == null || record.getGoalId() == null) {
+                continue;
+            }
+            try {
+                LocalTime startTime = LocalTime.parse(record.getStartTime());
+                LocalTime endTime = LocalTime.parse(record.getEndTime());
+                
+                long minutes = ChronoUnit.MINUTES.between(startTime, endTime);
+                if (minutes < 0) {
+                    minutes += 24 * 60;
+                }
+                
+                statsMap.put(record.getGoalId(), statsMap.getOrDefault(record.getGoalId(), 0L) + minutes);
+            } catch (Exception e) {
+                log.warn("Failed to parse time for goal record", e);
+            }
+        }
 
         // Convert to DTO
         return goals.stream().map(goal -> {

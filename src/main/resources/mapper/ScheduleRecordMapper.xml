@@ -36,4 +36,20 @@
         AND record_type = 'actual'
     </select>
 
+    <select id="selectRecentRecordsWithGoalId" resultType="com.life.yolo.dto.GoalScheduleRecordDto">
+        SELECT
+            gar.goal_id AS goalId,
+            sr.start_time AS startTime,
+            sr.end_time AS endTime
+        FROM
+            schedule_record sr
+        INNER JOIN goal_activity_type_relation gar ON sr.user_id = gar.user_id
+            AND sr.activity_type = gar.type_code
+        WHERE
+            sr.user_id = #{userId}
+            AND sr.record_type = 'actual'
+            AND sr.biz_date &gt; #{startDate}
+            AND sr.biz_date &lt;= #{endDate}
+    </select>
+
 </mapper>
