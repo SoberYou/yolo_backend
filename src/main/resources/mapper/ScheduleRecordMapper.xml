@@ -23,4 +23,17 @@
             update_time = NOW()
     </insert>
 
+    <select id="selectRecordsByGoalId" resultType="com.life.yolo.entity.ScheduleRecord">
+        SELECT
+            sr.*
+        FROM
+            schedule_record sr
+        INNER JOIN goal_activity_type_relation gar ON sr.user_id = gar.user_id 
+            AND sr.activity_type = gar.type_code
+        WHERE
+            sr.user_id = #{userId}
+            AND gar.goal_id = #{goalId}
+        AND record_type = 'actual'
+    </select>
+
 </mapper>

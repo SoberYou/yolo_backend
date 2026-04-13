@@ -167,6 +167,187 @@
         }
       }
     },
+    "/api/goals/configureGoalActivityRelations": {
+      "post": {
+        "tags": [
+          "Goal"
+        ],
+        "summary": "配置目标与活动类型关联 (批量覆盖)",
+        "operationId": "configureGoalActivityRelations",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoalActivityRelationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/goals/getGoalActivityRelations/{goalId}": {
+      "get": {
+        "tags": [
+          "Goal"
+        ],
+        "summary": "获取目标绑定的活动类型列表",
+        "operationId": "getGoalActivityRelations",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/goals/addGoalActivityRelation/{goalId}/{typeCode}": {
+      "post": {
+        "tags": [
+          "Goal"
+        ],
+        "summary": "绑定单个活动类型到目标",
+        "operationId": "addGoalActivityRelation",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "typeCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/goals/deleteGoalActivityRelation/{goalId}/{typeCode}": {
+      "delete": {
+        "tags": [
+          "Goal"
+        ],
+        "summary": "解除目标与单个活动类型的绑定",
+        "operationId": "deleteGoalActivityRelation",
+        "parameters": [
+          {
+            "name": "X-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "goalId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "typeCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },"}]}
     "/api/goals/{goalId}": {
       "get": {
         "tags": ["Goal"],
@@ -1798,6 +1979,21 @@
           },
           "sortOrder": {
             "type": "integer"
+          }
+        }
+      },
+      "GoalActivityRelationDto": {
+        "type": "object",
+        "properties": {
+          "goalId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "typeCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }

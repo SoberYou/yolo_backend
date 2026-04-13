@@ -2,6 +2,7 @@ package com.life.yolo.controller;
 
 import com.life.yolo.common.ApiResponse;
 import com.life.yolo.dto.GoalWithStatsDto;
+import com.life.yolo.dto.GoalActivityRelationDto;
 import com.life.yolo.entity.Goal;
 import com.life.yolo.service.GoalService;
 import lombok.Data;
@@ -58,5 +59,39 @@ public class GoalController {
         private Integer expectedTotalHours;
         private String northStar;
         private String status;
+    }
+
+    @PostMapping("/configureGoalActivityRelations")
+    public ApiResponse<Void> configureGoalActivityRelations(
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody GoalActivityRelationDto dto) {
+        goalService.configureGoalActivityRelations(userId, dto.getGoalId(), dto.getTypeCodes());
+        return ApiResponse.success(null);
+    }
+
+    @GetMapping("/getGoalActivityRelations/{goalId}")
+    public ApiResponse<List<String>> getGoalActivityRelations(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long goalId) {
+        List<String> typeCodes = goalService.getGoalActivityRelations(userId, goalId);
+        return ApiResponse.success(typeCodes);
+    }
+
+    @PostMapping("/addGoalActivityRelation/{goalId}/{typeCode}")
+    public ApiResponse<Void> addGoalActivityRelation(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long goalId,
+            @PathVariable String typeCode) {
+        goalService.addGoalActivityRelation(userId, goalId, typeCode);
+        return ApiResponse.success(null);
+    }
+
+    @DeleteMapping("/deleteGoalActivityRelation/{goalId}/{typeCode}")
+    public ApiResponse<Void> deleteGoalActivityRelation(
+            @RequestHeader("X-User-Id") Long userId,
+            @PathVariable Long goalId,
+            @PathVariable String typeCode) {
+        goalService.deleteGoalActivityRelation(userId, goalId, typeCode);
+        return ApiResponse.success(null);
     }
 }

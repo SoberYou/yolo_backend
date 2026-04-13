@@ -125,3 +125,16 @@ CREATE TABLE IF NOT EXISTS `do_not_do_item` (
   PRIMARY KEY (`id`),
   INDEX `idx_user_type` (`user_id`, `item_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='做/不做清单表';
+
+-- 10. Goal and Activity Type Relation Table
+CREATE TABLE IF NOT EXISTS `goal_activity_type_relation` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `goal_id` BIGINT NOT NULL COMMENT '目标ID',
+  `type_code` VARCHAR(50) NOT NULL COMMENT '活动类型Code',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_goal_type_code` (`user_id`, `goal_id`, `type_code`),
+  INDEX `idx_goal_id` (`goal_id`),
+  INDEX `idx_type_code` (`type_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='目标与活动类型关联表';

@@ -98,6 +98,52 @@
   - `userId`: 用户ID (Long)
   - `status` (可选): 筛选状态 (如 "ARCHIVED")。若不传，默认筛选非归档目标。
 - **Response**: `ApiResponse<List<GoalWithStatsDto>>`
+
+### 2.3 配置目标与活动类型关联 (批量覆盖)
+为指定目标批量配置或覆盖活动类型关联。
+- **URL**: `/goals/configureGoalActivityRelations`
+- **Method**: `POST`
+- **Headers**: 
+  - `X-User-Id`: 用户ID (Long)
+- **Body**:
+  ```json
+  {
+    "goalId": 1,
+    "typeCodes": ["coding", "reading", "meeting"]
+  }
+  ```
+- **Response**: `ApiResponse<Void>`
+
+### 2.4 获取目标绑定的活动类型列表
+获取指定目标已绑定的所有活动类型 Code 列表。
+- **URL**: `/goals/getGoalActivityRelations/{goalId}`
+- **Method**: `GET`
+- **Headers**: 
+  - `X-User-Id`: 用户ID (Long)
+- **Response**: `ApiResponse<List<String>>`
+  ```json
+  {
+    "code": 200,
+    "message": "Success",
+    "data": ["coding", "reading"]
+  }
+  ```
+
+### 2.5 绑定单个活动类型到目标
+为指定目标添加单个活动类型的绑定关系。
+- **URL**: `/goals/addGoalActivityRelation/{goalId}/{typeCode}`
+- **Method**: `POST`
+- **Headers**: 
+  - `X-User-Id`: 用户ID (Long)
+- **Response**: `ApiResponse<Void>`
+
+### 2.6 解除目标与活动类型的绑定
+移除指定目标与单个活动类型的绑定关系。
+- **URL**: `/goals/deleteGoalActivityRelation/{goalId}/{typeCode}`
+- **Method**: `DELETE`
+- **Headers**: 
+  - `X-User-Id`: 用户ID (Long)
+- **Response**: `ApiResponse<Void>`
   ```json
   {
     "code": 200,

@@ -2,20 +2,24 @@ package com.life.yolo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.life.yolo.dto.DailyFocusRecord;
+import com.life.yolo.dto.FocusSessionDto;
 import com.life.yolo.dto.FocusStatsDto;
 import com.life.yolo.dto.GoalWithStatsDto;
 import com.life.yolo.entity.FocusSession;
 import com.life.yolo.entity.Goal;
+import com.life.yolo.entity.GoalActivityTypeRelation;
+import com.life.yolo.entity.ScheduleRecord;
 import com.life.yolo.mapper.FocusSessionMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.life.yolo.mapper.GoalActivityTypeRelationMapper;
+import com.life.yolo.mapper.ScheduleRecordMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.life.yolo.dto.FocusSessionDto;
-import org.springframework.beans.BeanUtils;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,16 +28,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FocusService {
 
-    @Autowired
-    private FocusSessionMapper focusSessionMapper;
-
-    @Autowired
-    private GoalService goalService;
-
-    @Autowired
-    private UserService userService;
+    private final FocusSessionMapper focusSessionMapper;
+    private final GoalService goalService;
+    private final UserService userService;
+    private final GoalActivityTypeRelationMapper goalActivityTypeRelationMapper;
+    private final ScheduleRecordMapper scheduleRecordMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public FocusSession startFocus(Long userId, Long goalId) {
@@ -163,38 +165,51 @@ public class FocusService {
             throw new RuntimeException("Goal not found or access denied");
         }
 
-        QueryWrapper<FocusSession> query = new QueryWrapper<>();
-        query.eq("goal_id", goalId);
-        query.eq("status", "COMPLETED");
-        query.orderByDesc("start_time");
-        
-        List<FocusSession> sessions = focusSessionMapper.selectList(query);
-        
+        // 1. 使用 mapper.xml 中的 SQL 关联查询
+        List<ScheduleRecord> relatedRecords = scheduleRecordMapper.selectRecordsByGoalId(userId, goalId);
+
         LocalDate today = LocalDate.now();
         LocalDate sevenDaysAgo = today.minusDays(7);
         LocalDate thirtyDaysAgo = today.minusDays(30);
 
-        long totalMinutes = sessions.stream()
-                .mapToLong(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
-                .sum();
-        
-        long last7DaysMinutes = sessions.stream()
-                .filter(s -> s.getStartTime() != null && s.getStartTime().toLocalDate().isAfter(sevenDaysAgo))
-                .mapToLong(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
-                .sum();
+        long totalMinutes = 0;
+        long last7DaysMinutes = 0;
+        long last30DaysMinutes = 0;
+        Map<LocalDate, Integer> dailyMap = new java.util.HashMap<>();
 
-        long last30DaysMinutes = sessions.stream()
-                .filter(s -> s.getStartTime() != null && s.getStartTime().toLocalDate().isAfter(thirtyDaysAgo))
-                .mapToLong(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
-                .sum();
+        // 2. 计算各个日程记录的投入时间
+        for (ScheduleRecord record : relatedRecords) {
+            if (record.getStartTime() == null || record.getEndTime() == null || record.getBizDate() == null) {
+                continue;
+            }
+            try {
+                LocalTime startTime = LocalTime.parse(record.getStartTime());
+                LocalTime endTime = LocalTime.parse(record.getEndTime());
+                LocalDate bizDate = record.getBizDate();
+                
+                // 计算分钟差
+                long minutes = ChronoUnit.MINUTES.between(startTime, endTime);
+                // 跨天的情况简单处理
+                if (minutes < 0) {
+                    minutes += 24 * 60;
+                }
 
-        // Group by date for daily records
-        Map<LocalDate, Integer> dailyMap = sessions.stream()
-                .filter(s -> s.getStartTime() != null)
-                .collect(Collectors.groupingBy(
-                        s -> s.getStartTime().toLocalDate(),
-                        Collectors.summingInt(s -> s.getDurationMinutes() != null ? s.getDurationMinutes() : 0)
-                ));
+                totalMinutes += minutes;
+
+                if (bizDate.isAfter(sevenDaysAgo) && !bizDate.isAfter(today)) {
+                    last7DaysMinutes += minutes;
+                }
+
+                if (bizDate.isAfter(thirtyDaysAgo) && !bizDate.isAfter(today)) {
+                    last30DaysMinutes += minutes;
+                }
+
+                dailyMap.merge(bizDate, (int) minutes, Integer::sum);
+            } catch (Exception e) {
+                // 忽略解析错误的记录
+                continue;
+            }
+        }
 
         List<DailyFocusRecord> dailyRecords = dailyMap.entrySet().stream()
                 .map(entry -> new DailyFocusRecord(entry.getKey(), entry.getValue()))
