@@ -83,16 +83,45 @@ CREATE TABLE `schedule_activity_type` (
 
 -- 7. Schedule Record Table
 CREATE TABLE `schedule_record` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `biz_date` date NOT NULL COMMENT '日期',
+  `record_type` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'plan/actual',
+  `start_time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '开始时间',
+  `end_time` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '结束时间',  
+  `activity_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL COMMENT '活动类型',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `uk_date_slot_type` (`user_id`,`biz_date`,`record_type`,`start_time`,`end_time`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='日程记录表';
+
+-- 8. Todo Item Table
+CREATE TABLE IF NOT EXISTS `todo_item` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `user_id` BIGINT NOT NULL COMMENT '用户ID',
-  `biz_date` DATE NOT NULL COMMENT '日期',
-  `time_slot` INT NOT NULL COMMENT '时间槽0-47',
-  `record_type` VARCHAR(10) NOT NULL COMMENT 'plan/actual',
-  `activity_type` VARCHAR(50) COMMENT '活动类型',
+  `date_type` VARCHAR(20) NOT NULL COMMENT '日期类型: DAY, WEEK, MONTH, YEAR',
+  `start_date` VARCHAR(20) NOT NULL COMMENT '开始日期',
+  `end_date` VARCHAR(20) NOT NULL COMMENT '结束日期',
+  `content` VARCHAR(500) NOT NULL COMMENT '待办事项',
+  `priority` VARCHAR(20) DEFAULT 'MEDIUM' COMMENT '优先级: HIGH, MEDIUM, LOW',
+  `sort_order` INT DEFAULT 0 COMMENT '排序',
+  `is_completed` TINYINT DEFAULT 0 COMMENT '是否已完成: 0否, 1是',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_user_date_slot_type`
-  (`user_id`,`biz_date`,`time_slot`,`record_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='日程记录表';
+  INDEX `idx_user_date` (`user_id`, `date_type`, `start_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='待办事项表';
 
+-- 9. Do Not Do Item Table
+CREATE TABLE IF NOT EXISTS `do_not_do_item` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `item_type` VARCHAR(20) NOT NULL COMMENT '类型: DO, NOT_DO',
+  `content` VARCHAR(500) NOT NULL COMMENT '清单内容',
+  `sort_order` INT DEFAULT 0 COMMENT '排序',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_user_type` (`user_id`, `item_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='做/不做清单表';

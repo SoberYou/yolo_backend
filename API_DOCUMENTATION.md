@@ -366,3 +366,285 @@
   }
   ```
 
+## 6. 待办事项 (Todo)
+
+### 6.1 获取待办事项列表
+查询指定用户的待办事项，支持按日期类型、时间范围和完成状态过滤。
+
+- **URL**: `/todo/getTodos`
+- **Method**: `GET`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+  - `dateType` (String, 选填): 日期类型 (DAY, WEEK, MONTH, YEAR)
+  - `startDate` (String, 选填): 开始日期 (如 "2023-10-25")
+  - `endDate` (String, 选填): 结束日期 (如 "2023-10-25")
+  - `isCompleted` (Integer, 选填): 是否完成 (0: 未完成, 1: 已完成)
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": 1,
+      "userId": 12345,
+      "dateType": "DAY",
+      "startDate": "2023-10-25",
+      "endDate": "2023-10-25",
+      "content": "买牛奶",
+      "priority": "HIGH",
+      "sortOrder": 1,
+      "isCompleted": 0,
+      "createTime": "2023-10-25T10:00:00",
+      "updateTime": "2023-10-25T10:00:00"
+    }
+  ]
+}
+```
+
+### 6.2 创建待办事项
+新增一条待办事项。
+
+- **URL**: `/todo/createTodo`
+- **Method**: `POST`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+{
+  "dateType": "DAY",
+  "startDate": "2023-10-25",
+  "endDate": "2023-10-25",
+  "content": "买牛奶",
+  "priority": "HIGH",
+  "sortOrder": 1
+}
+```
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "userId": 12345,
+    "dateType": "DAY",
+    "startDate": "2023-10-25",
+    "endDate": "2023-10-25",
+    "content": "买牛奶",
+    "priority": "HIGH",
+    "sortOrder": 1,
+    "isCompleted": 0,
+    "createTime": "2023-10-25T10:00:00",
+    "updateTime": "2023-10-25T10:00:00"
+  }
+}
+```
+
+### 6.3 更新待办事项
+更新已有待办事项信息。
+
+- **URL**: `/todo/updateTodo/{id}`
+- **Method**: `PUT`
+- **Path Variables**:
+  - `id` (Long, 必填): 待办事项ID
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+{
+  "isCompleted": 1,
+  "priority": "LOW",
+  "content": "买牛奶和面包"
+}
+```
+- **Response**: 返回更新后的对象数据。
+
+### 6.4 删除待办事项
+删除指定ID的待办事项。
+
+- **URL**: `/todo/deleteTodo/{id}`
+- **Method**: `DELETE`
+- **Path Variables**:
+  - `id` (Long, 必填): 待办事项ID
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": null
+}
+```
+
+### 6.5 批量更新排序
+批量更新待办事项的排序顺序。
+
+- **URL**: `/todo/batchUpdateSort`
+- **Method**: `PUT`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+[
+  {
+    "id": 1,
+    "sortOrder": 1
+  },
+  {
+    "id": 2,
+    "sortOrder": 2
+  }
+]
+```
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": null
+}
+```
+
+## 7. 做/不做清单 (Do Not Do)
+
+### 7.1 获取做/不做清单
+查询指定用户的做/不做清单列表，支持按类型过滤。
+
+- **URL**: `/donotdo/getItems`
+- **Method**: `GET`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+  - `itemType` (String, 选填): 类型 (DO, NOT_DO)
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": 1,
+      "userId": 12345,
+      "itemType": "NOT_DO",
+      "content": "熬夜",
+      "sortOrder": 1,
+      "createTime": "2023-10-25T10:00:00",
+      "updateTime": "2023-10-25T10:00:00"
+    }
+  ]
+}
+```
+
+### 7.2 创建清单项
+新增一条做/不做清单记录。
+
+- **URL**: `/donotdo/createItem`
+- **Method**: `POST`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+{
+  "itemType": "NOT_DO",
+  "content": "熬夜",
+  "sortOrder": 1
+}
+```
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "userId": 12345,
+    "itemType": "NOT_DO",
+    "content": "熬夜",
+    "sortOrder": 1,
+    "createTime": "2023-10-25T10:00:00",
+    "updateTime": "2023-10-25T10:00:00"
+  }
+}
+```
+
+### 7.3 更新清单项
+更新指定的清单记录信息。
+
+- **URL**: `/donotdo/updateItem/{id}`
+- **Method**: `PUT`
+- **Path Params**:
+  - `id` (Long, 必填): 记录ID
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+{
+  "content": "不要熬夜",
+  "sortOrder": 2
+}
+```
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": {
+    "id": 1,
+    "userId": 12345,
+    "itemType": "NOT_DO",
+    "content": "不要熬夜",
+    "sortOrder": 2,
+    "createTime": "2023-10-25T10:00:00",
+    "updateTime": "2023-10-26T10:00:00"
+  }
+}
+```
+
+### 7.4 删除清单项
+删除指定的清单记录。
+
+- **URL**: `/donotdo/deleteItem/{id}`
+- **Method**: `DELETE`
+- **Path Params**:
+  - `id` (Long, 必填): 记录ID
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": null
+}
+```
+
+### 7.5 批量更新排序
+批量更新清单项的排序顺序。
+
+- **URL**: `/donotdo/batchUpdateSort`
+- **Method**: `PUT`
+- **Query Params**:
+  - `userId` (Long, 必填): 用户ID
+- **Body**:
+```json
+[
+  {
+    "id": 1,
+    "sortOrder": 1
+  },
+  {
+    "id": 2,
+    "sortOrder": 2
+  }
+]
+```
+- **Response**:
+```json
+{
+  "code": 200,
+  "message": "Success",
+  "data": null
+}
+```
+
