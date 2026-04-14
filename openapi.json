@@ -1236,6 +1236,45 @@
         }
       }
     },
+    "/api/schedule/batchUpdateActivityTypeSort": {
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Batch update activity type sort order",
+        "operationId": "batchUpdateActivityTypeSort",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "User ID for data isolation"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ActivityTypeSortUpdateDto"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": ["Auth"],
@@ -1971,6 +2010,18 @@
         }
       },
       "DoNotDoSortUpdateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sortOrder": {
+            "type": "integer"
+          }
+        }
+      },
+      "ActivityTypeSortUpdateDto": {
         "type": "object",
         "properties": {
           "id": {

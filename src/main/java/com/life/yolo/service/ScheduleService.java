@@ -1,6 +1,7 @@
 package com.life.yolo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.life.yolo.dto.ActivityTypeSortUpdateDto;
 import com.life.yolo.entity.ScheduleActivityType;
 import com.life.yolo.entity.ScheduleRecord;
 import com.life.yolo.mapper.ScheduleActivityTypeMapper;
@@ -55,6 +56,14 @@ public class ScheduleService {
         QueryWrapper<ScheduleActivityType> query = new QueryWrapper<>();
         query.eq("id", id).eq("user_id", userId);
         activityTypeMapper.delete(query);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void batchUpdateActivityTypeSort(Long userId, List<ActivityTypeSortUpdateDto> sortUpdates) {
+        if (sortUpdates == null || sortUpdates.isEmpty()) {
+            return;
+        }
+        activityTypeMapper.batchUpdateSortOrder(sortUpdates, userId);
     }
 
     // --- ScheduleRecord ---

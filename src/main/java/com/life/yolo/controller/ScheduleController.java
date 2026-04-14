@@ -1,6 +1,7 @@
 package com.life.yolo.controller;
 
 import com.life.yolo.common.ApiResponse;
+import com.life.yolo.dto.ActivityTypeSortUpdateDto;
 import com.life.yolo.entity.ScheduleActivityType;
 import com.life.yolo.entity.ScheduleRecord;
 import com.life.yolo.service.ScheduleService;
@@ -46,6 +47,14 @@ public class ScheduleController {
             @RequestParam Long id,
             @RequestParam Long userId) {
         scheduleService.deleteActivityType(id, userId);
+        return ApiResponse.success(null);
+    }
+
+    @PostMapping("/batchUpdateActivityTypeSort")
+    public ApiResponse<Void> batchUpdateActivityTypeSort(
+            @RequestParam Long userId,
+            @RequestBody List<ActivityTypeSortUpdateDto> sortUpdates) {
+        scheduleService.batchUpdateActivityTypeSort(userId, sortUpdates);
         return ApiResponse.success(null);
     }
 

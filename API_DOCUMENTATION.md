@@ -524,6 +524,24 @@
 }
 ```
 
+### 5.4 Update Activity Type
+* **URL:** `/api/schedule/updateActivityType`
+* **Method:** `POST`
+* **Query Parameters:**
+  * `userId` (Long, required): User ID
+* **Request Body:** `ScheduleActivityType` (JSON)
+* **Response:** `ApiResponse<ScheduleActivityType>`
+
+### 5.5 Batch Update Activity Type Sort
+* **URL:** `/api/schedule/batchUpdateActivityTypeSort`
+* **Method:** `POST`
+* **Query Parameters:**
+  * `userId` (Long, required): User ID
+* **Request Body:** Array of `ActivityTypeSortUpdateDto` (JSON)
+  * `id` (Long): Activity type ID
+  * `sortOrder` (Integer): New sort order
+* **Response:** `ApiResponse<Void>`
+
 ### 6.5 批量更新排序
 批量更新待办事项的排序顺序。
 
