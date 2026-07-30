@@ -448,6 +448,96 @@
 }
 ```
 
+## 8. SOP 模版 (SOP Template)
+
+提供细粒度的增删改查以支持前端实时保存的交互。
+
+### 8.1 新建模版
+- **URL**: `/api/sop/template/create`
+- **Method**: `POST`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"name": "模版名称"}`
+- **Response**: 返回新建的 `templateId` (Long)
+
+### 8.2 获取模版列表
+- **URL**: `/api/sop/template/list`
+- **Method**: `GET`
+- **Query Params**: `userId` (Long, 必填)
+- **Response**: `ApiResponse<List<SopTemplate>>`
+
+### 8.3 获取模版详情(树形结构)
+- **URL**: `/api/sop/template/detail/{templateId}`
+- **Method**: `GET`
+- **Query Params**: `userId` (Long, 必填)
+- **Response**: `ApiResponse<SopTemplateDetailDto>` (包含嵌套的 categories 和 items)
+
+### 8.4 修改模版名称
+- **URL**: `/api/sop/template/update/{templateId}`
+- **Method**: `PUT`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"name": "新名称"}`
+- **Response**: `ApiResponse<Void>`
+
+### 8.5 删除模版 (级联)
+- **URL**: `/api/sop/template/delete/{templateId}`
+- **Method**: `DELETE`
+- **Query Params**: `userId` (Long, 必填)
+- **Response**: `ApiResponse<Void>`
+
+### 8.6 新增分类模块
+- **URL**: `/api/sop/category/create`
+- **Method**: `POST`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"templateId": 1, "name": "分类名称", "type": "key-value"}`
+- **Response**: 返回新建的 `categoryId` (Long)
+
+### 8.7 修改分类模块
+- **URL**: `/api/sop/category/update/{categoryId}`
+- **Method**: `PUT`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"name": "新名称"}`
+- **Response**: `ApiResponse<Void>`
+
+### 8.8 删除分类模块 (级联)
+- **URL**: `/api/sop/category/delete/{categoryId}`
+- **Method**: `DELETE`
+- **Query Params**: `userId` (Long, 必填)
+- **Response**: `ApiResponse<Void>`
+
+### 8.9 批量更新分类模块排序
+- **URL**: `/api/sop/category/batchUpdateSort`
+- **Method**: `POST`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `[{"id": 1, "sortOrder": 1}]`
+- **Response**: `ApiResponse<Void>`
+
+### 8.10 新增明细项
+- **URL**: `/api/sop/item/create`
+- **Method**: `POST`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"categoryId": 1, "itemKey": "键", "itemValue": "值"}`
+- **Response**: 返回新建的 `itemId` (Long)
+
+### 8.11 修改明细项
+- **URL**: `/api/sop/item/update/{itemId}`
+- **Method**: `PUT`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `{"itemKey": "键", "itemValue": "值"}`
+- **Response**: `ApiResponse<Void>`
+
+### 8.12 删除明细项
+- **URL**: `/api/sop/item/delete/{itemId}`
+- **Method**: `DELETE`
+- **Query Params**: `userId` (Long, 必填)
+- **Response**: `ApiResponse<Void>`
+
+### 8.13 批量更新明细项排序
+- **URL**: `/api/sop/item/batchUpdateSort`
+- **Method**: `POST`
+- **Query Params**: `userId` (Long, 必填)
+- **Body**: `[{"id": 1, "sortOrder": 1}]`
+- **Response**: `ApiResponse<Void>`
+
 ### 6.2 创建待办事项
 新增一条待办事项。
 

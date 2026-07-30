@@ -138,3 +138,41 @@ CREATE TABLE IF NOT EXISTS `goal_activity_type_relation` (
   INDEX `idx_goal_id` (`goal_id`),
   INDEX `idx_type_code` (`type_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='目标与活动类型关联表';
+
+-- 11. SOP Template Table
+CREATE TABLE IF NOT EXISTS `sop_template` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `name` VARCHAR(255) NOT NULL COMMENT '模版名称',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SOP模版表';
+
+-- 12. SOP Category Table
+CREATE TABLE IF NOT EXISTS `sop_category` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
+  `template_id` BIGINT NOT NULL COMMENT '关联模版ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `name` VARCHAR(255) NOT NULL COMMENT '分类名称',
+  `type` VARCHAR(50) NOT NULL COMMENT '类型: key-value, checked, step',
+  `sort_order` INT DEFAULT 0 COMMENT '排序',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_template_id` (`template_id`),
+  INDEX `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SOP模版分类表';
+
+-- 13. SOP Item Table
+CREATE TABLE IF NOT EXISTS `sop_item` (
+  `id` BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',
+  `category_id` BIGINT NOT NULL COMMENT '关联分类ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `item_key` VARCHAR(255) COMMENT '键',
+  `item_value` TEXT COMMENT '值',
+  `sort_order` INT DEFAULT 0 COMMENT '排序',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  INDEX `idx_category_id` (`category_id`),
+  INDEX `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SOP模版明细项表';

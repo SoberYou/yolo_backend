@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.yolo.mapper.SopCategoryMapper">
+    <insert id="batchUpdateSortOrder">
+        INSERT INTO sop_category (id, user_id, template_id, name, type, sort_order)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{userId}, 0, '', '', #{item.sortOrder})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            sort_order = IF(user_id = VALUES(user_id), VALUES(sort_order), sort_order),
+            update_time = NOW()
+    </insert>
+</mapper>
