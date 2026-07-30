@@ -176,3 +176,36 @@ CREATE TABLE IF NOT EXISTS `sop_item` (
   INDEX `idx_category_id` (`category_id`),
   INDEX `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SOP模版明细项表';
+
+-- 14. Event Schedule Table
+CREATE TABLE IF NOT EXISTS `event_schedule` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `event_name` VARCHAR(100) NOT NULL COMMENT '事件名称',
+  `start_time` TIME NOT NULL COMMENT '开始时间',
+  `end_time` TIME NOT NULL COMMENT '结束时间',
+  `effective_start_date` DATE NOT NULL COMMENT '有效开始日期',
+  `effective_end_date` DATE DEFAULT NULL COMMENT '有效结束日期，NULL表示当前生效',
+  `is_deleted` TINYINT NOT NULL DEFAULT 0 COMMENT '是否删除：0否，1是',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  INDEX `idx_user_active` (`user_id`, `is_deleted`, `effective_end_date`),
+  INDEX `idx_effective_range` (`effective_start_date`, `effective_end_date`),
+  UNIQUE KEY `uk_active_event` (`user_id`, `event_name`, `start_time`, `end_time`, `effective_end_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='时间待办事件配置表';
+
+-- 15. Event Execution Table
+CREATE TABLE IF NOT EXISTS `event_execution` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `schedule_id` BIGINT NOT NULL COMMENT '事件配置ID',
+  `execute_date` DATE NOT NULL COMMENT '执行日期',
+  `is_executed` TINYINT NOT NULL DEFAULT 0 COMMENT '是否已执行：0否，1是',
+  `executed_at` DATETIME DEFAULT NULL COMMENT '实际执行时间',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_schedule_date` (`schedule_id`, `execute_date`),
+  INDEX `idx_execute_date` (`execute_date`),
+  CONSTRAINT `fk_event_execution_schedule` FOREIGN KEY (`schedule_id`) REFERENCES `event_schedule` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='时间待办执行记录表';
