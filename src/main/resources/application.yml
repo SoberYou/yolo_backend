@@ -6,9 +6,12 @@ spring:
     name: yolo-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost/yolo_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
-    username: "root"
-    password: "nihaoa77" # Change this to your DB password
+    url: jdbc:mysql://127.0.0.1:33306/yolo_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    username: biroot
+    password: e&nD(=AX#NsobZi+0pbr
+#    url: jdbc:mysql://localhost:3306/yolo_db?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+#    username: root
+#    password: 944c917f2f123957
   jackson:
     time-zone: UTC
     serialization:

@@ -275,12 +275,13 @@ public class EventScheduleService {
         LocalDateTime now = LocalDateTime.now();
         if (execution != null && execution.getIsExecuted() != null && execution.getIsExecuted() == 1) {
             execution.setIsExecuted(0);
-            execution.setExecutedAt(null);
             execution.setUpdatedAt(now);
             eventExecutionMapper.updateById(execution);
         } else if (execution != null) {
             execution.setIsExecuted(1);
-            execution.setExecutedAt(now);
+            if (execution.getExecutedAt() == null) {
+                execution.setExecutedAt(now);
+            }
             execution.setUpdatedAt(now);
             eventExecutionMapper.updateById(execution);
         } else {
@@ -308,13 +309,22 @@ public class EventScheduleService {
         QueryWrapper<EventExecution> query = new QueryWrapper<>();
         query.eq("schedule_id", scheduleId).eq("execute_date", executeDate).last("limit 1");
         EventExecution execution = eventExecutionMapper.selectOne(query);
-        if (execution == null || execution.getIsExecuted() == null || execution.getIsExecuted() != 1) {
-            throw new IllegalArgumentException("仅已执行事项可修改执行时间");
+        LocalDateTime now = LocalDateTime.now();
+        if (execution == null) {
+            execution = new EventExecution();
+            execution.setScheduleId(scheduleId);
+            execution.setExecuteDate(executeDate);
+            execution.setCreatedAt(now);
         }
+        execution.setIsExecuted(1);
         execution.setExecutedAt(LocalDateTime.of(executeDate, executedAt));
-        execution.setUpdatedAt(LocalDateTime.now());
-        eventExecutionMapper.updateById(execution);
-        return buildExecutionResponse(schedule, execution, executeDate, LocalDateTime.now());
+        execution.setUpdatedAt(now);
+        if (execution.getId() == null) {
+            eventExecutionMapper.insert(execution);
+        } else {
+            eventExecutionMapper.updateById(execution);
+        }
+        return buildExecutionResponse(schedule, execution, executeDate, now);
     }
 
     private EventSchedule requireOwnedSchedule(Long userId, Long scheduleId) {
